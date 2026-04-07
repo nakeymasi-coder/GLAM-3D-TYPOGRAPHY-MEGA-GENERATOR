@@ -1,0 +1,2326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLAM 3D Typography Mega Generator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Montserrat',sans-serif;background:#070d1c;color:#fff;overflow-x:hidden;min-height:100vh;}
+#particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.marquee-track{animation:marquee 26s linear infinite;white-space:nowrap;display:inline-flex;}
+@keyframes shimmer-gold{0%{background-position:-300% center;}100%{background-position:300% center;}}
+@keyframes glow-ring{0%,100%{box-shadow:0 0 30px rgba(212,175,55,.2),0 0 60px rgba(212,175,55,.08);}50%{box-shadow:0 0 50px rgba(212,175,55,.4),0 0 100px rgba(212,175,55,.18);}}
+@keyframes float-ud{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes btn-pulse{0%,100%{box-shadow:0 0 22px rgba(212,175,55,.3);}50%{box-shadow:0 0 44px rgba(212,175,55,.55);}}
+@keyframes btn-shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+@keyframes slide-up{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fade-down{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.luxury-card{background:linear-gradient(145deg,#0d1829 0%,#111c35 60%,#0d1829 100%);border:1.5px solid rgba(212,175,55,.22);border-radius:22px;box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(212,175,55,.1);transition:border-color .4s,box-shadow .4s;animation:glow-ring 4s ease-in-out infinite;position:relative;overflow:hidden;}
+.luxury-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(30,64,175,.08) 0%,transparent 60%);pointer-events:none;}
+.generator-name{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(1.6rem,5vw,3.4rem);letter-spacing:.04em;line-height:1.15;background:linear-gradient(135deg,#b8860b,#D4AF37,#FFD700,#FFFACD,#FFD700,#D4AF37,#b8860b);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer-gold 5s linear infinite;text-align:center;}
+.deco-diamond{position:absolute;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);background:linear-gradient(135deg,#D4AF37,#FFD700,rgba(255,255,255,.8));opacity:.1;pointer-events:none;}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.section-head h3{font-family:'Cinzel',serif;font-size:.82rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(212,175,55,.88);}
+.s-icon{width:28px;height:28px;background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.06));border:1px solid rgba(212,175,55,.28);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.multi-hint{margin-left:auto;font-size:.6rem;letter-spacing:.1em;color:rgba(212,175,55,.45);background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);border-radius:50px;padding:3px 10px;}
+.field-label{font-family:'Cinzel',serif;font-size:.63rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(212,175,55,.72);margin-bottom:7px;margin-top:13px;display:flex;align-items:center;gap:6px;}
+.field-label:first-child{margin-top:0;}
+.glam-input{width:100%;background:rgba(255,255,255,.04);border:1.5px solid rgba(212,175,55,.2);border-radius:12px;padding:13px 18px;font-family:'Montserrat',sans-serif;font-size:.9rem;color:#fff;outline:none;transition:border-color .3s,box-shadow .3s;}
+.glam-input::placeholder{color:rgba(255,255,255,.28);}
+.glam-input:focus{border-color:rgba(212,175,55,.52);box-shadow:0 0 0 4px rgba(212,175,55,.06);}
+.glam-textarea{width:100%;resize:vertical;min-height:66px;background:rgba(255,255,255,.04);border:1.5px solid rgba(212,175,55,.18);border-radius:11px;padding:11px 15px;font-family:'Montserrat',sans-serif;font-size:.8rem;color:rgba(255,255,255,.78);outline:none;transition:border-color .3s;}
+.glam-textarea::placeholder{color:rgba(255,255,255,.22);}
+.glam-textarea:focus{border-color:rgba(212,175,55,.48);}
+.glam-select{display:block;width:100%;min-height:48px;line-height:1.2;background:rgba(255,255,255,.04);border:1.5px solid rgba(212,175,55,.18);border-radius:11px;padding:12px 38px 12px 14px;font-family:'Montserrat',sans-serif;font-size:.8rem;color:rgba(255,255,255,.82);outline:none;appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;transition:border-color .3s;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23D4AF37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:11px;}
+.glam-select::-ms-expand{display:none;}
+select.glam-select{background-clip:padding-box;}
+.glam-select:focus{border-color:rgba(212,175,55,.52);}
+.glam-select option{background:#0d1829;color:#fff;}
+.cat-pill{padding:7px 16px;border-radius:50px;font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.06em;cursor:pointer;border:1.5px solid rgba(212,175,55,.16);color:rgba(255,255,255,.52);background:rgba(255,255,255,.03);transition:all .28s;}
+.cat-pill:hover{color:rgba(212,175,55,.88);border-color:rgba(212,175,55,.38);background:rgba(212,175,55,.05);}
+.cat-pill.active{background:linear-gradient(135deg,#1e3a8a,#1e40af);border-color:rgba(212,175,55,.48);color:#FFD700;box-shadow:0 0 18px rgba(30,64,175,.45);}
+.styles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;}
+.style-card{padding:12px 6px;border-radius:11px;text-align:center;cursor:pointer;border:1.5px solid rgba(212,175,55,.1);background:rgba(255,255,255,.03);transition:all .28s;}
+.style-card:hover{border-color:rgba(212,175,55,.38);background:rgba(212,175,55,.05);transform:translateY(-2px);}
+.style-card.active{border-color:#D4AF37;background:rgba(212,175,55,.11);box-shadow:0 0 14px rgba(212,175,55,.18);}
+.style-card .se{font-size:1.65rem;margin-bottom:4px;display:block;}
+.style-card .sn{font-size:.6rem;font-weight:600;color:rgba(255,255,255,.55);letter-spacing:.04em;}
+.style-card.active .sn{color:#FFD700;}
+.mod-chip{display:inline-flex;align-items:center;padding:5px 13px;border-radius:50px;font-family:'Montserrat',sans-serif;font-size:.67rem;font-weight:600;letter-spacing:.05em;cursor:pointer;border:1.5px solid rgba(212,175,55,.13);color:rgba(255,255,255,.46);background:rgba(255,255,255,.03);transition:all .22s;margin:3px;}
+.mod-chip:hover{border-color:rgba(212,175,55,.38);color:rgba(212,175,55,.88);}
+.mod-chip.active{background:rgba(212,175,55,.12);border-color:#D4AF37;color:#FFD700;box-shadow:0 0 8px rgba(212,175,55,.14);}
+.mod-chip.none-chip{color:rgba(255,100,100,.5);border-color:rgba(255,80,80,.14);}
+.mod-chip.none-chip:hover{border-color:rgba(255,100,100,.4);color:#fca5a5;}
+.toggle-wrap{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.toggle-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.7);}
+.toggle-switch{position:relative;display:inline-block;width:46px;height:25px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;cursor:pointer;background:rgba(255,255,255,.08);border-radius:50px;border:1.5px solid rgba(212,175,55,.18);transition:all .3s;}
+.toggle-track::before{content:'';position:absolute;width:17px;height:17px;left:3px;bottom:3px;background:rgba(255,255,255,.38);border-radius:50%;transition:all .3s;}
+.toggle-switch input:checked + .toggle-track{background:linear-gradient(135deg,#1e3a8a,#2563eb);border-color:rgba(212,175,55,.45);}
+.toggle-switch input:checked + .toggle-track::before{transform:translateX(21px);background:#FFD700;}
+.gender-toggle{display:flex;gap:10px;margin-bottom:14px;}
+.gender-btn{flex:1;padding:10px;border-radius:11px;font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;cursor:pointer;border:1.5px solid rgba(255,255,255,.08);color:rgba(255,255,255,.38);background:rgba(255,255,255,.03);transition:all .28s;}
+.gender-btn:hover{border-color:rgba(212,175,55,.28);color:rgba(212,175,55,.75);}
+.gender-btn.male-active{background:linear-gradient(135deg,rgba(30,58,138,.45),rgba(37,99,235,.25));border-color:rgba(147,197,253,.45);color:#93c5fd;}
+.gender-btn.female-active{background:linear-gradient(135deg,rgba(131,24,67,.38),rgba(219,39,119,.18));border-color:rgba(249,168,212,.45);color:#f9a8d4;}
+.gender-panel{background:rgba(255,255,255,.02);border:1px dashed rgba(212,175,55,.14);border-radius:13px;padding:15px;margin-bottom:12px;}
+.gender-panel-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:11px;}
+.no-gender-msg{text-align:center;padding:18px;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);}
+.smart-btn{padding:12px 11px;border-radius:10px;border:1.5px solid rgba(212,175,55,.22);background:rgba(212,175,55,.07);color:#FFD700;font-size:.95rem;cursor:pointer;transition:all .22s;flex-shrink:0;}
+.smart-btn:hover{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.48);}
+.lock-btn{padding:7px 12px;border-radius:999px;border:1.5px solid rgba(212,175,55,.22);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;letter-spacing:.12em;cursor:pointer;transition:all .22s;flex-shrink:0;text-transform:uppercase;}
+.lock-btn:hover{border-color:rgba(212,175,55,.42);color:#FFD700;background:rgba(212,175,55,.08);}
+.lock-btn.active{background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(255,215,0,.12));border-color:#D4AF37;color:#FFD700;box-shadow:0 0 16px rgba(212,175,55,.18);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+@media(max-width:600px){.two-col,.three-col,.four-col{grid-template-columns:1fr;}}
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.22),rgba(212,175,55,.38),rgba(212,175,55,.22),transparent);margin:22px 0;}
+.custom-color-wrap{background:rgba(212,175,55,.04);border:1.5px solid rgba(212,175,55,.16);border-radius:13px;padding:16px;margin-top:11px;}
+.custom-color-title{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:rgba(212,175,55,.72);margin-bottom:12px;}
+.color-hex-label{font-size:.62rem;color:rgba(255,255,255,.32);margin-bottom:5px;letter-spacing:.06em;}
+.color-row{display:flex;gap:7px;align-items:center;}
+.color-swatch{width:40px;height:40px;border-radius:8px;border:1.5px solid rgba(212,175,55,.28);cursor:pointer;flex-shrink:0;}
+.color-hex{flex:1;background:rgba(255,255,255,.04);border:1.5px solid rgba(212,175,55,.18);border-radius:8px;padding:9px 11px;font-family:monospace;font-size:.76rem;color:#fff;outline:none;}
+.color-hex::placeholder{color:rgba(255,255,255,.2);}
+.action-row{display:flex;gap:11px;margin-bottom:13px;}
+.action-btn{flex:1;padding:13px;border-radius:11px;font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;cursor:pointer;transition:all .22s;}
+.randomize-btn{background:rgba(30,64,175,.18);border:1.5px solid rgba(30,64,175,.45);color:#93c5fd;}
+.randomize-btn:hover{background:rgba(30,64,175,.32);}
+.clear-btn{background:rgba(160,20,20,.14);border:1.5px solid rgba(200,50,50,.28);color:#fca5a5;}
+.clear-btn:hover{background:rgba(160,20,20,.28);}
+.generate-row{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+@media(max-width:500px){.generate-row{grid-template-columns:1fr;}}
+.generate-btn{padding:17px;border-radius:13px;border:none;cursor:pointer;font-family:'Cinzel',serif;font-weight:700;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;position:relative;overflow:hidden;transition:transform .2s,opacity .2s;}
+.generate-btn:hover{transform:scale(1.02);}
+.generate-btn:active{transform:scale(.98);opacity:.9;}
+.photo-btn{background:linear-gradient(135deg,#b8860b,#D4AF37,#FFD700,#D4AF37,#b8860b);background-size:200% auto;color:#0d1829;animation:btn-pulse 2.5s ease-in-out infinite,btn-shimmer 4s linear infinite;}
+.video-btn{background:linear-gradient(135deg,#1e3a8a,#2563eb,#3b82f6,#2563eb,#1e3a8a);background-size:200% auto;color:#FFD700;animation:btn-shimmer 4s linear infinite;}
+.suno-btn{background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899,#a855f7,#7c3aed);background-size:200% auto;color:#fff;animation:btn-shimmer 4s linear infinite;}
+.generate-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);background-size:200% auto;animation:btn-shimmer 2s linear infinite;}
+.btn-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:9px;}
+.preset-card{padding:13px;border-radius:13px;border:1.5px solid rgba(212,175,55,.16);background:rgba(255,255,255,.03);cursor:pointer;transition:all .28s;text-align:center;}
+.preset-card:hover{border-color:rgba(212,175,55,.48);background:rgba(212,175,55,.07);transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.4);}
+.preset-card .pe{font-size:1.55rem;margin-bottom:4px;}
+.preset-card .pn{font-family:'Cinzel',serif;font-size:.63rem;font-weight:700;letter-spacing:.1em;color:rgba(212,175,55,.82);margin-bottom:2px;}
+.preset-card .pd{font-size:.58rem;color:rgba(255,255,255,.3);}
+.output-card{background:linear-gradient(145deg,#0a1020,#0d1829);border:1.5px solid rgba(212,175,55,.32);border-radius:22px;padding:clamp(20px,4vw,34px);box-shadow:0 0 55px rgba(212,175,55,.09),0 20px 55px rgba(0,0,0,.55);position:relative;overflow:hidden;animation:slide-up .45s ease-out;}
+.output-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#D4AF37,#FFD700,#D4AF37,transparent);}
+.output-heading{font-family:'Cinzel Decorative',serif;font-weight:700;font-size:clamp(1.2rem,3.5vw,1.7rem);background:linear-gradient(135deg,#D4AF37,#FFD700,#FFFACD,#FFD700,#D4AF37);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer-gold 4s linear infinite;}
+.output-type-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.17em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-top:3px;display:block;}
+.copy-btn{padding:9px 18px;border-radius:9px;border:1.5px solid rgba(30,64,175,.55);background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#FFD700;font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.14em;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:transform .2s,box-shadow .2s;}
+.copy-btn:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(30,64,175,.45);}
+.save-btn{padding:9px 18px;border-radius:9px;border:1.5px solid rgba(212,175,55,.45);background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(255,215,0,.08));color:#FFD700;font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.14em;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:transform .2s,box-shadow .2s;}
+.save-btn:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(212,175,55,.25);}
+.output-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.variation-btn{padding:9px 18px;border-radius:9px;border:1.5px solid rgba(147,197,253,.45);background:linear-gradient(135deg,rgba(30,64,175,.22),rgba(59,130,246,.12));color:#93c5fd;font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.14em;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:transform .2s,box-shadow .2s;}
+.variation-btn:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(59,130,246,.22);}
+.variations-wrap{margin-top:16px;display:none;}
+.variations-title{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(147,197,253,.82);margin-bottom:10px;}
+.variation-grid{display:grid;gap:12px;}
+.variation-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(147,197,253,.18);border-radius:12px;padding:14px;}
+.variation-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.variation-name{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#93c5fd;}
+.variation-copy{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(147,197,253,.35);background:rgba(30,64,175,.16);color:#93c5fd;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+.variation-copy:hover{transform:scale(1.04);box-shadow:0 0 12px rgba(147,197,253,.18);}
+.variation-text{font-size:.76rem;line-height:1.7;color:rgba(255,255,255,.82);white-space:pre-wrap;word-break:break-word;}
+.suno-sections{display:none;margin-top:16px;gap:12px;}
+.suno-section-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(212,175,55,.18);border-radius:12px;padding:14px;}
+.suno-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.suno-section-name{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#FFD700;}
+.suno-copy{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(212,175,55,.35);background:rgba(212,175,55,.10);color:#FFD700;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+.suno-copy:hover,.section-action:hover{transform:scale(1.04);box-shadow:0 0 12px rgba(212,175,55,.18);}
+.suno-save,.section-save{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(236,72,153,.35);background:rgba(236,72,153,.10);color:#f9a8d4;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+.section-action-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.suno-section-text,.section-card-text{font-size:.76rem;line-height:1.7;color:rgba(255,255,255,.82);white-space:pre-wrap;word-break:break-word;}
+.video-sections{display:none;margin-top:16px;gap:12px;}
+.video-section-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(96,165,250,.18);border-radius:12px;padding:14px;}
+.video-section-name{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#93c5fd;}
+.section-copy{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(147,197,253,.35);background:rgba(30,64,175,.16);color:#93c5fd;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+.history-wrap{margin-top:16px;}
+.history-toggle{width:100%;padding:12px 16px;border-radius:12px;border:1.5px solid rgba(212,175,55,.18);background:rgba(255,255,255,.03);font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.78);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .24s;}
+.history-toggle:hover{border-color:rgba(212,175,55,.38);background:rgba(212,175,55,.06);}
+.history-list{display:grid;gap:10px;margin-top:12px;}
+.history-item{background:rgba(255,255,255,.03);border:1.5px solid rgba(212,175,55,.14);border-radius:12px;padding:12px;}
+.history-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+.history-kind{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.72);}
+.history-time{font-size:.68rem;color:rgba(255,255,255,.34);}
+.history-preview{font-size:.74rem;line-height:1.6;color:rgba(255,255,255,.72);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;}
+.history-btn{padding:8px 12px;border-radius:9px;border:1.5px solid rgba(30,64,175,.45);background:rgba(30,64,175,.16);color:#93c5fd;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.12em;font-weight:700;cursor:pointer;}
+.history-empty{font-size:.74rem;color:rgba(255,255,255,.38);padding:14px 4px;}
+.prompt-box{background:rgba(255,255,255,.03);border:1.5px solid rgba(212,175,55,.18);border-radius:11px;padding:18px;margin-top:16px;font-family:'Montserrat',sans-serif;font-size:.8rem;line-height:1.8;color:rgba(255,255,255,.84);word-break:break-word;white-space:pre-wrap;}
+.tips-box{background:rgba(212,175,55,.04);border:1.5px solid rgba(212,175,55,.16);border-radius:11px;padding:16px;margin-top:16px;}
+.tips-title{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:rgba(212,175,55,.7);margin-bottom:9px;}
+.tips-box li{font-size:.74rem;color:rgba(255,255,255,.46);margin-bottom:4px;list-style:none;}
+.tips-box code{background:rgba(212,175,55,.12);border-radius:4px;padding:1px 5px;font-size:.7rem;color:#FFD700;}
+.how-to-toggle{width:100%;padding:13px 20px;border-radius:13px;border:1.5px solid rgba(212,175,55,.18);background:rgba(212,175,55,.04);font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.75);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .28s;}
+.how-to-toggle:hover{border-color:rgba(212,175,55,.38);background:rgba(212,175,55,.07);}
+.how-to-content{background:linear-gradient(145deg,#0d1829,#111c35);border:1.5px solid rgba(212,175,55,.15);border-top:none;border-radius:0 0 14px 14px;padding:20px;animation:fade-down .3s ease-out;}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+.step-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.13);border-radius:11px;padding:13px;}
+.step-num{font-family:'Cinzel',serif;font-size:.6rem;font-weight:700;letter-spacing:.16em;color:rgba(212,175,55,.55);margin-bottom:4px;}
+.step-title{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.78);margin-bottom:3px;}
+.step-desc{font-size:.68rem;color:rgba(255,255,255,.38);line-height:1.55;}
+.presets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:9px;}
+.section-rule{border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3),rgba(212,175,55,.5),rgba(212,175,55,.3),transparent);margin:0;}
+
+.tab-nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:0 auto 22px;max-width:940px;padding:0 16px;}
+.tab-btn{padding:12px 18px;border-radius:12px;border:1.5px solid rgba(212,175,55,.18);background:rgba(255,255,255,.04);color:rgba(255,255,255,.72);font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .24s;}
+.tab-btn:hover{border-color:rgba(212,175,55,.42);color:#FFD700;background:rgba(212,175,55,.08);}
+.tab-btn.active{background:linear-gradient(135deg,#1e3a8a,#2563eb);border-color:rgba(212,175,55,.48);color:#FFD700;box-shadow:0 0 18px rgba(30,64,175,.35);}
+.generator-tab-panel{display:none;}
+.generator-tab-panel.active{display:block;}
+.refgen-card{background:linear-gradient(145deg,#0d1829 0%,#111c35 60%,#0d1829 100%);border:1.5px solid rgba(212,175,55,.22);border-radius:22px;box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(212,175,55,.1);padding:clamp(18px,4vw,38px);}
+.refgen-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.refgen-grid{grid-template-columns:1fr;}}
+.refgen-output{background:rgba(255,255,255,.03);border:1.5px solid rgba(212,175,55,.18);border-radius:12px;padding:18px;margin-top:18px;}
+
+
+.scroll-fab{position:fixed;right:16px;z-index:9999;width:54px;height:54px;border-radius:999px;border:1.5px solid rgba(212,175,55,.42);background:linear-gradient(135deg,rgba(13,24,41,.92),rgba(30,64,175,.88));color:#FFD700;display:flex;align-items:center;justify-content:center;font-size:1.15rem;cursor:pointer;box-shadow:0 0 18px rgba(212,175,55,.22),0 0 36px rgba(30,64,175,.18);transition:transform .22s,box-shadow .22s,opacity .22s;backdrop-filter:blur(8px);}
+.scroll-fab:hover{transform:scale(1.08);box-shadow:0 0 24px rgba(212,175,55,.35),0 0 48px rgba(30,64,175,.28);}
+.scroll-fab:active{transform:scale(.96);}
+.scroll-fab-up{top:50%;margin-top:-66px;}
+.scroll-fab-down{top:50%;margin-top:10px;}
+.scroll-fab.hidden{opacity:0;pointer-events:none;}
+@media(max-width:700px){.scroll-fab{right:10px;width:48px;height:48px;}.scroll-fab-up{margin-top:-58px;}.scroll-fab-down{margin-top:8px;}}
+
+
+.marketing-sections{display:none;margin-top:16px;gap:12px;}
+.marketing-section-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(212,175,55,.18);border-radius:12px;padding:14px;}
+.marketing-section-name{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#FFD700;}
+.marketing-section-text{font-size:.76rem;line-height:1.7;color:rgba(255,255,255,.82);white-space:pre-wrap;word-break:break-word;}
+.marketing-copy{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(212,175,55,.35);background:rgba(212,175,55,.10);color:#FFD700;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+.marketing-copy:hover,.marketing-save:hover{transform:scale(1.04);box-shadow:0 0 12px rgba(212,175,55,.18);}
+.marketing-save{padding:7px 12px;border-radius:8px;border:1.5px solid rgba(236,72,153,.35);background:rgba(236,72,153,.10);color:#f9a8d4;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;font-weight:700;cursor:pointer;transition:all .2s;}
+
+</style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+<!-- MARQUEE -->
+<div style="background:linear-gradient(90deg,#0d1829,#1e3a8a,#0d1829);border-bottom:1px solid rgba(212,175,55,.22);overflow:hidden;height:33px;display:flex;align-items:center;">
+  <div class="marquee-track">
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(212,175,55,.68);padding:0 34px;">✦ 3D TYPOGRAPHY PROMPT GENERATOR</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(255,255,255,.28);padding:0 34px;">⬥ MIDJOURNEY · DALL-E · IDEOGRAM · RUNWAYML · KLING</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(212,175,55,.68);padding:0 34px;">✦ PHOTO PROMPTS + VIDEO SCRIPTS</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(255,255,255,.28);padding:0 34px;">⬥ BEACONAI × GLAMOROUSGRAMMYGLOWUP</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(212,175,55,.68);padding:0 34px;">✦ 3D TYPOGRAPHY PROMPT GENERATOR</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(255,255,255,.28);padding:0 34px;">⬥ MIDJOURNEY · DALL-E · IDEOGRAM · RUNWAYML · KLING</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(212,175,55,.68);padding:0 34px;">✦ PHOTO PROMPTS + VIDEO SCRIPTS</span>
+    <span style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;color:rgba(255,255,255,.28);padding:0 34px;">⬥ BEACONAI × GLAMOROUSGRAMMYGLOWUP</span>
+  </div>
+</div>
+<!-- HEADER -->
+<header style="position:relative;padding:50px 20px 38px;text-align:center;overflow:hidden;background:linear-gradient(180deg,#070d1c,#0d1829);">
+  <div class="deco-diamond" style="width:65px;height:65px;top:18px;left:4%;animation:float-ud 6s ease-in-out infinite;"></div>
+  <div class="deco-diamond" style="width:40px;height:40px;top:36px;right:6%;animation:float-ud 5s ease-in-out infinite 1s;"></div>
+  <div style="position:relative;z-index:1;">
+    <div style="font-size:2.2rem;margin-bottom:11px;filter:drop-shadow(0 0 14px rgba(212,175,55,.55));animation:float-ud 4s ease-in-out infinite;">👑</div>
+    <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.32em;color:rgba(212,175,55,.46);text-transform:uppercase;margin-bottom:14px;">BeaconAI × GlamorousGrammyGlowUp</div>
+    <h1 class="generator-name" id="generator-heading" style="margin-bottom:6px;font-weight:900;">GLAM 3D TYPOGRAPHY</h1>
+    <h1 class="generator-name" style="font-size:clamp(.95rem,2.8vw,1.75rem);opacity:.78;font-weight:700;">MEGA GENERATOR</h1>
+    <div style="width:96px;height:2px;background:linear-gradient(90deg,transparent,#D4AF37,#FFD700,#D4AF37,transparent);margin:18px auto;border-radius:2px;"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:9px;justify-content:center;">
+      <span style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.28);border-radius:50px;padding:4px 15px;font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.1em;color:rgba(212,175,55,.72);">📸 Photo Prompts</span>
+      <span style="background:rgba(37,99,235,.13);border:1px solid rgba(37,99,235,.36);border-radius:50px;padding:4px 15px;font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.1em;color:rgba(147,197,253,.75);">🎬 Video Scripts</span>
+      <span style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.28);border-radius:50px;padding:4px 15px;font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.1em;color:rgba(212,175,55,.72);">💎 15 Presets</span>
+      <span style="background:rgba(37,99,235,.13);border:1px solid rgba(37,99,235,.36);border-radius:50px;padding:4px 15px;font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.1em;color:rgba(147,197,253,.75);">🎲 Randomizer</span>
+    </div>
+  </div>
+</header>
+<hr class="section-rule">
+<div class="tab-nav">
+  <button class="tab-btn active" id="tab-btn-main" onclick="switchGeneratorTab('main')">✨ 3D Typography Generator</button>
+  <button class="tab-btn" id="tab-btn-ref" onclick="switchGeneratorTab('ref')">🔤 Reference Font Generator</button>
+</div>
+<div style="max-width:940px;margin:0 auto;padding:20px 16px 80px;position:relative;z-index:1;">
+<div id="generator-tab-main" class="generator-tab-panel active">
+<!-- PRESETS -->
+<section style="margin-bottom:24px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <div style="font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(212,175,55,.75);">✨ Quick Presets</div>
+    <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(212,175,55,.28),transparent);"></div>
+  </div>
+  <div id="presets-grid" class="presets-grid"></div>
+</section>
+<!-- GENERATOR CARD -->
+<div class="luxury-card" id="gen-card" style="padding:clamp(18px,4vw,38px);">
+  <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.55),transparent);border-radius:22px 22px 0 0;"></div>
+  <!-- STYLE SELECTION -->
+  <div class="section-head">
+    <div class="s-icon">✍️</div>
+    <h3>Style Selection</h3>
+    <button type="button" class="lock-btn" id="lock-style" onclick="toggleLock('style')">🔓 Style</button>
+    <span class="multi-hint">click to multi-select</span>
+  </div>
+  <div class="field-label">Your Text</div>
+  <input type="text" id="user-text" class="glam-input" placeholder="Type your text or leave empty for a surprise…">
+  <div class="field-label" style="margin-top:16px;">Material Category</div>
+  <div id="categories" style="display:flex;flex-wrap:wrap;gap:7px;"></div>
+  <div class="field-label">Choose Styles <span style="font-size:.56rem;color:rgba(255,255,255,.28);font-family:'Montserrat',sans-serif;font-weight:400;letter-spacing:.05em;text-transform:none;">— click one or more</span></div>
+  <div id="styles-grid" class="styles-grid"></div>
+  <div class="field-label">Custom Notes for <span id="cat-label" style="color:#FFD700;">Typography</span></div>
+  <textarea id="custom-notes" class="glam-textarea" placeholder="Extra detail for this category (colors, effects, mood, anything you want in the prompt)…"></textarea>
+  
+  <div class="section-divider"></div>
+  <!-- MERGED CLASSIC BUILDER -->
+  <div class="section-head">
+    <div class="s-icon">🧩</div>
+    <h3>Classic Object Builder Add-Ons</h3>
+    <button type="button" class="lock-btn" id="lock-classic" onclick="toggleLock('classic')">🔓 Classic</button>
+  </div>
+  <div class="two-col">
+    <div><div class="field-label">Object-Based Font Style</div><select id="merge-object-font" class="glam-select"></select></div>
+    <div><div class="field-label">Letter Construction</div><select id="merge-construction" class="glam-select"></select></div>
+  </div>
+  <div class="three-col" style="margin-top:13px;">
+    <div><div class="field-label">Realism Level</div><select id="merge-realism" class="glam-select"></select></div>
+    <div><div class="field-label">Finish / Lighting</div><select id="merge-finish" class="glam-select"></select></div>
+    <div><div class="field-label">Thickness</div><select id="merge-thickness" class="glam-select"></select></div>
+  </div>
+  <div class="three-col" style="margin-top:13px;">
+    <div><div class="field-label">Edge Style</div><select id="merge-edge" class="glam-select"></select></div>
+    <div><div class="field-label">Shadow</div><select id="merge-shadow" class="glam-select"></select></div>
+    <div><div class="field-label">Drips / Melts</div><select id="merge-drips" class="glam-select"></select></div>
+  </div>
+  <div class="three-col" style="margin-top:13px;">
+    <div><div class="field-label">Primary Color</div><select id="merge-primary" class="glam-select"></select></div>
+    <div><div class="field-label">Secondary Color</div><select id="merge-secondary" class="glam-select"></select></div>
+    <div><div class="field-label">Accent Highlights</div><select id="merge-accent" class="glam-select"></select></div>
+  </div>
+  <div class="two-col" style="margin-top:13px;">
+    <div><div class="field-label">Decorative Details</div><select id="merge-decor" class="glam-select"></select></div>
+    <div><div class="field-label">Mood / Aesthetic</div><select id="merge-mood" class="glam-select"></select></div>
+  </div>
+
+  <div class="section-divider"></div>
+  <!-- CHARACTER -->
+  <div class="section-head" style="margin-bottom:8px;">
+    <div class="s-icon">👤</div>
+    <h3>Add Character to Scene</h3>
+    <div class="toggle-wrap">
+      <span class="toggle-label">Include</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="add-character" onchange="toggleCharacter()">
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+  <div id="character-panel" style="display:none;">
+    <div class="field-label" style="margin-top:10px;">Subject Gender</div>
+    <div class="gender-toggle">
+      <button class="gender-btn" id="gender-male" onclick="setGender('male')">♂ MALE</button>
+      <button class="gender-btn" id="gender-female" onclick="setGender('female')">♀ FEMALE</button>
+    </div>
+    <div id="no-gender-msg" class="no-gender-msg">← Select a gender to reveal character options</div>
+    <!-- MALE ONLY -->
+    <div id="male-options" style="display:none;" class="gender-panel">
+      <div class="gender-panel-label" style="color:#93c5fd;">♂ Male Character Options</div>
+      <div class="two-col">
+        <div><div class="field-label">Hairstyle</div><select id="male-hairstyle" class="glam-select"></select></div>
+        <div><div class="field-label">Outfit Style</div><select id="male-outfit" class="glam-select"></select></div>
+      </div>
+      <div class="two-col" style="margin-top:13px;">
+        <div><div class="field-label">Shoes</div><select id="male-shoes" class="glam-select"></select></div>
+        <div><div class="field-label">Accessories</div><select id="male-accessories" class="glam-select"></select></div>
+      </div>
+    </div>
+    <!-- FEMALE ONLY -->
+    <div id="female-options" style="display:none;" class="gender-panel">
+      <div class="gender-panel-label" style="color:#f9a8d4;">♀ Female Character Options</div>
+      <div class="two-col">
+        <div><div class="field-label">Hairstyle</div><select id="female-hairstyle" class="glam-select"></select></div>
+        <div><div class="field-label">Outfit Style</div><select id="female-outfit" class="glam-select"></select></div>
+      </div>
+      <div class="two-col" style="margin-top:13px;">
+        <div><div class="field-label">Shoes</div><select id="female-shoes" class="glam-select"></select></div>
+        <div><div class="field-label">Accessories</div><select id="female-accessories" class="glam-select"></select></div>
+      </div>
+      <div class="three-col" style="margin-top:13px;">
+        <div><div class="field-label">Lashes</div><select id="female-lashes" class="glam-select"></select></div>
+        <div><div class="field-label">Eyebrows</div><select id="female-eyebrows" class="glam-select"></select></div>
+        <div><div class="field-label">Makeup</div><select id="female-makeup" class="glam-select"></select></div>
+      </div>
+      <div class="three-col" style="margin-top:13px;">
+        <div><div class="field-label">Nails</div><select id="female-nails" class="glam-select"></select></div>
+        <div><div class="field-label">Hair Gems</div><select id="female-hair-gems" class="glam-select"></select></div>
+        <div><div class="field-label">Earrings</div><select id="female-earrings" class="glam-select"></select></div>
+      </div>
+    </div>
+    <!-- SHARED -->
+    <div id="shared-char" style="display:none;">
+      <div class="three-col">
+        <div><div class="field-label">Skin Tone</div><select id="skin-tone" class="glam-select"></select></div>
+        <div><div class="field-label">Expression</div><select id="expression" class="glam-select"></select></div>
+        <div><div class="field-label">Pose Style</div><select id="pose-style" class="glam-select"></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="section-divider"></div>
+  <!-- CAMERA -->
+  <div class="section-head">
+    <div class="s-icon">📷</div>
+    <h3>Camera Controls</h3>
+    <button type="button" class="lock-btn" id="lock-camera" onclick="toggleLock('camera')">🔓 Camera</button>
+  </div>
+  <div class="two-col">
+    <div><div class="field-label">Shot Type / Angle</div><select id="camera-angle" class="glam-select"></select></div>
+    <div><div class="field-label">Lens & Focal Length</div><select id="lens-type" class="glam-select"></select></div>
+  </div>
+  <div class="section-divider"></div>
+  <!-- LIGHTING -->
+  <div class="section-head">
+    <div class="s-icon">💡</div>
+    <h3>Lighting & Shadow</h3>
+    <button type="button" class="lock-btn" id="lock-lighting" onclick="toggleLock('lighting')">🔓 Lighting</button>
+  </div>
+  <div class="two-col">
+    <div><div class="field-label">Light Source</div><select id="light-source" class="glam-select"></select></div>
+    <div><div class="field-label">Light Direction</div><select id="light-direction" class="glam-select"></select></div>
+  </div>
+  <div class="two-col" style="margin-top:13px;">
+    <div><div class="field-label">Shadow Style</div><select id="shadow-style" class="glam-select"></select></div>
+    <div><div class="field-label">Atmosphere & Mood</div><select id="atmosphere" class="glam-select"></select></div>
+  </div>
+  <div class="section-divider"></div>
+  <!-- BACKGROUND & COLOR -->
+  <div class="section-head">
+    <div class="s-icon">🖼️</div>
+    <h3>Background & Color</h3>
+    <button type="button" class="lock-btn" id="lock-background" onclick="toggleLock('background')">🔓 Background</button>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="field-label">Background Style</div>
+      <div style="display:flex;gap:7px;align-items:flex-end;">
+        <select id="background-select" class="glam-select" style="flex:1;"></select>
+        <button class="smart-btn" onclick="applySmartBg()" title="Smart Auto — pick best background">🧠</button>
+      </div>
+    </div>
+    <div><div class="field-label">Color Palette</div><select id="color-palette" class="glam-select" onchange="toggleCustomColors()"></select></div>
+  </div>
+  <div id="custom-color-section" style="display:none;">
+    <div class="custom-color-wrap">
+      <div class="custom-color-title">🎨 Custom Brand Colors <span style="font-size:.58rem;color:rgba(255,255,255,.28);font-family:'Montserrat',sans-serif;font-weight:400;text-transform:none;letter-spacing:.04em;">(hex like #FF6B9D)</span></div>
+      <div class="four-col">
+        <div><div class="color-hex-label">Primary</div><div class="color-row"><input type="color" id="cp1" class="color-swatch" value="#FF6B9D"><input type="text" id="cc1" placeholder="#FF6B9D" maxlength="7" class="color-hex"></div></div>
+        <div><div class="color-hex-label">Secondary</div><div class="color-row"><input type="color" id="cp2" class="color-swatch" value="#C44569"><input type="text" id="cc2" placeholder="#C44569" maxlength="7" class="color-hex"></div></div>
+        <div><div class="color-hex-label">Accent</div><div class="color-row"><input type="color" id="cp3" class="color-swatch" value="#FFD700"><input type="text" id="cc3" placeholder="#FFD700" maxlength="7" class="color-hex"></div></div>
+        <div><div class="color-hex-label">Extra</div><div class="color-row"><input type="color" id="cp4" class="color-swatch" value="#FFFFFF"><input type="text" id="cc4" placeholder="#FFFFFF" maxlength="7" class="color-hex"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:13px;">
+    <div><div class="field-label">Animal Print Accent</div><select id="animal-print" class="glam-select"></select></div>
+    <div></div>
+  </div>
+  <div class="section-divider"></div>
+  <!-- MODIFIERS -->
+  <div class="section-head">
+    <div class="s-icon">✨</div>
+    <h3>Style Modifiers</h3>
+    <button type="button" class="lock-btn" id="lock-modifiers" onclick="toggleLock('modifiers')">🔓 Modifiers</button>
+    <span class="multi-hint">select multiple</span>
+  </div>
+  <div id="modifier-chips" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+  <div class="section-divider"></div>
+  <!-- ACTIONS -->
+  <div class="action-row">
+    <button class="action-btn randomize-btn" onclick="randomize()">🎲 RANDOMIZE</button>
+    <button class="action-btn clear-btn" onclick="clearAll()">🗑️ CLEAR ALL</button>
+  </div>
+  <div class="generate-row">
+    <button class="generate-btn photo-btn" onclick="generate('photo')"><span class="btn-inner">📸 GENERATE PHOTO PROMPT</span></button>
+    <button class="generate-btn video-btn" onclick="generate('video')"><span class="btn-inner">🎬 GENERATE VIDEO SCRIPT</span></button>
+    <button class="generate-btn suno-btn" onclick="generate('suno')"><span class="btn-inner">🎵 GENERATE SUNO PACK</span></button>
+  </div>
+</div>
+<!-- OUTPUT -->
+<div id="output-section" style="display:none;margin-top:26px;">
+  <div class="output-card">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:11px;flex-wrap:wrap;">
+      <div>
+        <div class="output-heading">✦ Your Prompt ✦</div>
+        <span id="output-type-label" class="output-type-label">📸 Photo Prompt</span>
+      </div>
+      <div class="output-actions">
+        <button class="copy-btn" onclick="copyOutput()"><span id="copy-icon">📋</span><span id="copy-text">COPY</span></button>
+        <button class="save-btn" onclick="saveOutput()"><span id="save-icon">💾</span><span id="save-text">SAVE PROMPT</span></button>
+        <button class="variation-btn" onclick="generateVariations()"><span id="variation-icon">🪄</span><span id="variation-text">3 MORE VARIATIONS</span></button>
+      </div>
+    </div>
+    <div id="prompt-output" class="prompt-box"></div>
+    <div id="suno-sections" class="suno-sections"></div>
+    <div id="video-sections" class="video-sections"></div>
+    <div id="marketing-sections" class="marketing-sections"></div>
+    <div id="variations-wrap" class="variations-wrap">
+      <div class="variations-title">🪄 3 More Variations</div>
+      <div id="variation-grid" class="variation-grid"></div>
+    </div>
+    <div class="history-wrap">
+      <button class="history-toggle" onclick="toggleHistory()"><span>🕘 Prompt History</span><span id="history-arrow">▼</span></button>
+      <div id="history-content" style="display:none;">
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+    <div class="tips-box">
+      <div class="tips-title">✦ Pro Tips</div>
+      <ul>
+        <li>💡 Photo prompts work with Midjourney, DALL-E 3, Ideogram, Adobe Firefly</li>
+        <li>🎬 Video scripts work with RunwayML Gen-4, Kling, Pika Labs, Sora</li>
+        <li>🎵 Suno packs give you a jingle, a 30-second song, and a 1-minute song starter</li>
+        <li>📐 Add <code>--ar 1:1</code> square · <code>--ar 16:9</code> wide · <code>--ar 9:16</code> vertical</li>
+        <li>🔄 Randomize + Regenerate for unlimited unique variations!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<div id="generator-tab-ref" class="generator-tab-panel">
+  <div class="refgen-card">
+    <div class="section-head">
+      <div class="s-icon">🔤</div>
+      <h3>Reference Font Prompt Generator</h3>
+    </div>
+
+    <div class="refgen-grid">
+      <div>
+        <div class="field-label">Text to Create</div>
+        <input type="text" id="ref-text" class="glam-input" placeholder="Type your words here">
+      </div>
+      <div>
+        <div class="field-label">Font Style</div>
+        <select id="ref-style" class="glam-select"></select>
+      </div>
+    </div>
+
+    <div class="refgen-grid" style="margin-top:13px;">
+      <div>
+        <div class="field-label">Layout</div>
+        <select id="ref-layout" class="glam-select"></select>
+      </div>
+      <div>
+        <div class="field-label">Background</div>
+        <select id="ref-background" class="glam-select"></select>
+      </div>
+    </div>
+
+    <div class="refgen-grid" style="margin-top:13px;">
+      <div>
+        <div class="field-label">Colors</div>
+        <select id="ref-colors" class="glam-select" onchange="toggleRefCustomColors()"></select>
+      </div>
+      <div id="ref-custom-wrap" style="display:none;">
+        <div class="field-label">Custom Colors</div>
+        <input type="text" id="ref-custom-colors" class="glam-input" placeholder="Example: primary hot pink, outline black, accent yellow">
+      </div>
+    </div>
+
+    <div class="generate-row" style="margin-top:18px;grid-template-columns:1fr;">
+      <button class="generate-btn photo-btn" onclick="generateReferencePrompt()"><span class="btn-inner">🔤 GENERATE REFERENCE FONT PROMPT</span></button>
+    </div>
+
+    <div id="ref-output-wrap" class="refgen-output" style="display:none;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:11px;flex-wrap:wrap;">
+        <div>
+          <div class="output-heading">✦ Your Reference Font Prompt ✦</div>
+          <span class="output-type-label">🔤 Canva / Typography Prompt</span>
+        </div>
+        <div class="output-actions">
+          <button class="copy-btn" onclick="copyReferencePrompt()"><span>📋</span><span>Copy</span></button>
+          <button class="save-btn" onclick="saveReferencePrompt()"><span>💾</span><span>Save Prompt</span></button>
+        </div>
+      </div>
+      <div id="ref-prompt-output" class="prompt-box"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<button id="scroll-up-btn" class="scroll-fab scroll-fab-up hidden" onclick="scrollPageTop()" aria-label="Scroll to top" title="Scroll to top">⬆</button>
+<button id="scroll-down-btn" class="scroll-fab scroll-fab-down" onclick="scrollPageBottom()" aria-label="Scroll to bottom" title="Scroll to bottom">⬇</button>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid rgba(212,175,55,.13);padding:26px 20px;text-align:center;background:#070d1c;">
+  <p style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,175,55,.38);margin-bottom:5px;">© All Rights Reserved GlamorousGrammyGlowUp</p>
+  <p style="font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.16em;color:rgba(255,255,255,.18);">BeaconAI · Digital Products That Slay · Create Bold. Show Up Glam. Get Paid.</p>
+</footer>
+<script>
+// ═══════════ PARTICLES ═══════════
+(function(){
+  const c=document.getElementById('particle-canvas'),ctx=c.getContext('2d');
+  let W,H,P=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  function Pt(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*1.8+.2;this.sy=-(Math.random()*.35+.08);this.sx=(Math.random()-.5)*.15;this.o=Math.random()*.45+.08;this.g=Math.random()>.5;}
+  for(let i=0;i<75;i++)P.push(new Pt());
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    P.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
+      ctx.fillStyle=p.g?`rgba(212,175,55,${p.o})`:`rgba(147,197,253,${p.o*.55})`;
+      ctx.fill();p.y+=p.sy;p.x+=p.sx;p.o+=(Math.random()-.5)*.01;
+      p.o=Math.max(.05,Math.min(.6,p.o));
+      if(p.y<-8){p.y=H+8;p.x=Math.random()*W;}
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════ DATA ═══════════
+const CAMERA_ANGLES=["None","Bird's Eye View","Bust Shot","Close-Up","Crane Shot","Dolly Shot","Dutch Angle","Establishing Shot","Extreme Close-Up","Extreme Wide Shot","Eye Level","Full Body Shot","Ground Level Shot","High Angle","Insert Shot","Knee Shot","Low Angle","Medium Close-Up","Medium Full Shot","Medium Shot","Medium Wide Shot","Oblique Angle","Over the Shoulder","Point of View (POV)","Rack Focus","Reverse Shot","Shoulder Level","Tilt Shot","Two Shot","Worm's Eye View"];
+const LENSES=["None","12mm Ultra-Wide","14mm Ultra-Wide","16mm Wide Angle","20mm Wide Angle","24mm Cinematic Wide","28mm Street Photography","35mm Cinematic Wide","50mm Standard","55mm Portrait","70mm Short Telephoto","85mm Portrait Prime","90mm Macro Close","100mm Macro Detail","105mm Portrait Telephoto","135mm Short Telephoto","150mm Telephoto","200mm Telephoto","300mm Super Telephoto","400mm Wildlife","500mm Super Telephoto","Anamorphic Widescreen","Cinematic Variable Zoom","Fisheye 8mm","Lensbaby Velvet Bokeh","Macro Extreme Detail","Pinhole Soft Focus","Tilt-Shift Miniature","Vintage Glass Bokeh","Zoom Lens 70-200mm"];
+const LIGHT_SOURCES=["None","Ambient Daylight Diffused","Backlit Halo Effect","Bioluminescent Glow","Black Light UV","Candlelight Warm","Chinese Paper Lanterns","Colored Gel Spotlights","Dappled Sunlight","Diffused Overcast Sky","Dramatic Spotlight","Fairy String Lights","Fill Light Panel","Fire and Flame","Flash Photography","Fluorescent Overhead","Fog Lights Atmospheric","Golden Hour Sunlight","Hard Direct Sunlight","LED Color Panel","Mixed Practical Lights","Moonlight Soft","Neon Sign Glow","Overhead Softbox Studio","Overhead Stadium Lighting","Rim Light Edge","Ring Light Even","Street Lamp Warm","Strobe Flash Effect","Twilight Dusk Glow"];
+const LIGHT_DIRECTIONS=["None","45° Above Left","45° Above Right","45° Front Left","45° Front Right","45° Rear Left","45° Rear Right","Backlighting Halo","Below Front Center","Below Left Corner","Below Right Corner","Broad Left Side","Broad Right Side","Butterfly / Paramount","Contre-Jour Back","Cross Both Sides","Diffused All Around","Direct Front Flat","Hard Left Side Split","Hard Right Side Split","High Back Center","Kicker Right Accent","Loop Left Natural","Low Angle Center","Low Front Left","Low Front Right","Overhead Center Top","Rembrandt Left Classic","Rembrandt Right Classic","Split Center Dramatic"];
+const SHADOW_STYLES=["None","Cast Long Dramatic","Cast Short Compact","Colored Shadow Tinted","Complex Multi-Shadow","Deep Black Shadow","Diffused Soft Edge","Double Shadow","Drop Shadow Clean","Elongated Dramatic","Feathered Gradient Edge","Film Noir Heavy","Geometric Pattern","Hard Edge Crisp","Inner Shadow Inset","Layered Depth","Minimal Barely-There","Mirror Reflection","Multi-Directional","No Shadow Flat","Pattern Projected","Reflected Ground","Rim Halo Shadow","Short Compact Shadow","Soft Gradient Natural","Textured Surface","Three-Dimensional Wrap","Two-Tone Contrast","Vignette Fade Edges","Wrapping Shadow"];
+const ATMOSPHERES=["None","Cinematic Epic Grand","Cozy Warm Intimate","Dark and Dramatic","Dreamy Ethereal Soft","Eerie and Mysterious","Enchanted Fantasy","Epic Action Adventure","Fairy Tale Whimsical","Fresh and Airy","Futuristic Sci-Fi","Glamorous High Luxury","Gothic Dark Romance","Groovy Retro Vibrant","Industrial Urban Grit","Joyful Bright Playful","Magical Sparkle","Melancholic Moody","Minimalist Zen Clean","Moody Cinematic","Mystical Ancient","Nostalgic Vintage","Peaceful Serene Nature","Playful Fun Energetic","Powerful Bold Strong","Romantic Soft Dreamy","Royal Opulent Majestic","Soft Romantic Gentle","Streetwear Cool Urban","Surreal Dreamlike"];
+const BACKGROUNDS=["None","Abstract Art Canvas","Aurora Borealis Sky","Beach and Ocean Waves","Bokeh Soft Lights","Brick Urban Wall","Candy and Sweet Shop","Cherry Blossom Garden","City Skyline Night","Clean White Studio","Cloud and Sky Dreamscape","Confetti Explosion","Crystal and Gemstone Cave","Deep Space Galaxy","Diamond Sparkle Shower","Dramatic Dark Studio","Fire and Flame Wall","Floating Hearts Cloud","Forest and Nature Canopy","Glitter and Sequin Rain","Marble Luxury Surface","Neon Glow City","Rainbow Spectrum Sky","Smoke and Atmospheric Haze","Starry Night Sky","Sunset Horizon Glow","Textured Stone Wall","Tropical Jungle Lush","Water and Wave Pool","Winter Snow Scene"];
+const COLOR_PALETTES_LIST=["None","Autumn Harvest Warm","Black and Gold Classic","Blue and Teal Aquatic","Blue Ice Crystal","Burgundy and Wine","Candy Pink Pastel","Cherry Red Bold","Chocolate Brown Warm","Coral and Peach","Cotton Candy Rainbow","Custom Brand Colors","Dark Forest Green","Dusty Rose Romantic","Earth Tones Natural","Emerald Green Jewel","Gold and White Luxury","Hot Pink Glitter","Lavender Dream","Midnight Navy Classic","Mint and Lavender","Monochrome Black White","Navy and Gold Classic","Pastel Neon Mix","Pink to Gold Gradient","Purple and Pink Royal","Rainbow Vibrant Full","Rose Gold Metallic","Royal Blue Deep","Sunset Orange Red"];
+const CP={
+  "Autumn Harvest Warm":"warm autumn harvest palette with burnt orange deep red and golden amber",
+  "Black and Gold Classic":"high-contrast black and gold metallic palette with luxury sophistication",
+  "Blue and Teal Aquatic":"ocean-inspired blue and teal aquatic gradient with tropical sea tones",
+  "Blue Ice Crystal":"icy blue and crystal white palette with frosty arctic glacier tones",
+  "Burgundy and Wine":"deep burgundy and wine red jewel-toned palette",
+  "Candy Pink Pastel":"soft candy pink and pastel sweet tones with bubblegum and cotton candy hues",
+  "Cherry Red Bold":"vibrant cherry red and crimson bold high-energy palette",
+  "Chocolate Brown Warm":"rich chocolate brown with warm mocha caramel and toffee tones",
+  "Coral and Peach":"warm coral and peachy gradient with blushing summer sunset tones",
+  "Cotton Candy Rainbow":"pastel rainbow cotton candy palette with pink mint lavender and yellow",
+  "Dark Forest Green":"deep forest green palette with rich emerald pine and hunter green",
+  "Dusty Rose Romantic":"muted dusty rose and antique pink with soft romantic faded tones",
+  "Earth Tones Natural":"earthy terracotta clay sand and warm brown natural palette",
+  "Emerald Green Jewel":"rich emerald green jewel-toned palette with brilliant gem-like depth",
+  "Gold and White Luxury":"pristine gold and white luxury palette with metallic shimmer",
+  "Hot Pink Glitter":"electric hot pink glitter palette with sparkling magenta texture",
+  "Lavender Dream":"soft lavender and lilac purple with dreamy pastel hues",
+  "Midnight Navy Classic":"sophisticated midnight navy deep royal blue-black palette",
+  "Mint and Lavender":"refreshing mint green and soft lavender cool pastel palette",
+  "Monochrome Black White":"crisp high-contrast monochrome black and white palette",
+  "Navy and Gold Classic":"elegant navy blue and gold with sophisticated refinement",
+  "Pastel Neon Mix":"vibrant pastel neon blend of electric pink mint lavender and neon yellow",
+  "Pink to Gold Gradient":"rosy pink to warm gold gradient with blush to metallic transition",
+  "Purple and Pink Royal":"royal purple and hot pink jewel-toned glamorous palette",
+  "Rainbow Vibrant Full":"full spectrum rainbow with saturated red orange yellow green blue and violet",
+  "Rose Gold Metallic":"warm rose gold metallic with pink copper and soft golden tones",
+  "Royal Blue Deep":"rich deep royal blue with saturated majestic tones",
+  "Sunset Orange Red":"fiery sunset with orange coral and deep red warm tones"
+};
+const ANIMAL_PRINTS_LIST=["None","Arctic Fox White Fur","Bengal Tiger Stripes","Blue Morpho Butterfly","Brindle Swirl Pattern","Brown Bear Fur","Cheetah Spots","Cobra Snake Skin","Cow Print Classic","Crocodile Scale","Dalmatian Spots","Galaxy Cosmic Print","Giraffe Pattern","Holographic Fish Scale","Houndstooth Classic","Jaguar Rosette Spots","Koi Fish Scale","Leopard Classic","Monarch Butterfly Wing","Ocelot Spots","Orca Whale Print","Ostrich Feather Texture","Peacock Feather Eye","Python Snake Skin","Rabbit Spotted Fur","Sea Turtle Scale","Serval Spots","Snow Leopard Rosette","Zebra Stripes Bold","Zorse Stripes"];
+const AP={
+  "Arctic Fox White Fur":"arctic fox white fur pattern with pristine snowy spotted texture",
+  "Bengal Tiger Stripes":"bold bengal tiger stripe pattern with warm orange and black stripes",
+  "Blue Morpho Butterfly":"blue morpho butterfly wing pattern with iridescent electric blue scales",
+  "Brindle Swirl Pattern":"brindle swirl pattern with warm brown and black interweaving",
+  "Brown Bear Fur":"brown bear fur texture with natural warm fiber pattern",
+  "Cheetah Spots":"cheetah spot pattern with precise small black spots on golden tan",
+  "Cobra Snake Skin":"cobra snake skin texture with smooth scaled pattern",
+  "Cow Print Classic":"classic cow print with bold black and white irregular patches",
+  "Crocodile Scale":"crocodile scale texture with geometric reptilian pattern",
+  "Dalmatian Spots":"dalmatian spot pattern with crisp black dots on clean white",
+  "Galaxy Cosmic Print":"cosmic galaxy print with deep space stars and nebula swirls",
+  "Giraffe Pattern":"giraffe irregular polygon pattern with tan and rich brown tones",
+  "Holographic Fish Scale":"holographic fish scale pattern with rainbow iridescent shimmer",
+  "Houndstooth Classic":"classic houndstooth geometric pattern in black and white",
+  "Jaguar Rosette Spots":"jaguar rosette spot pattern with dark clusters on golden base",
+  "Koi Fish Scale":"koi fish scale pattern with flowing overlapping circular texture",
+  "Leopard Classic":"classic leopard print with golden tan base and dark irregular spots",
+  "Monarch Butterfly Wing":"monarch butterfly wing pattern with orange and black geometric design",
+  "Ocelot Spots":"ocelot irregular spot and stripe pattern in warm tawny tones",
+  "Orca Whale Print":"orca whale bold black and white graphic pattern",
+  "Ostrich Feather Texture":"ostrich feather texture with soft fluffy fiber pattern",
+  "Peacock Feather Eye":"peacock feather eye pattern with iridescent blue-green and gold",
+  "Python Snake Skin":"python snake skin texture with subtle scaled rectangular pattern",
+  "Rabbit Spotted Fur":"spotted rabbit fur pattern with soft natural fiber texture",
+  "Sea Turtle Scale":"sea turtle hexagonal scale pattern in earthy olive and brown",
+  "Serval Spots":"serval cat spot pattern with bold spots and stripes in golden tones",
+  "Snow Leopard Rosette":"snow leopard rosette pattern with smoky grey and charcoal spots",
+  "Zebra Stripes Bold":"bold zebra stripe pattern with high-contrast black and white stripes",
+  "Zorse Stripes":"zorse hybrid stripe pattern with warm tan and dark brown stripes"
+};
+const MODIFIER_LIST=["None","Abstract Artistic","Analog Film Grain","Art Deco","Avant-Garde","Baroque Ornate","Bold Maximalist","Candy Pop","Cinematic Epic","Clean Minimal","Cottagecore","Cute Kawaii","Dark Academia","Dark Luxe","Editorial Fashion","Elegant Luxurious","Film Noir","Grunge Edgy","High Fashion","Holographic Iridescent","Hyper Realistic","Manga Anime","Monochrome","Neon Vibrant","Nostalgic Vintage","Painterly Artistic","Pastel Soft","Playful Fun","Punk Rock","Retro Futuristic"];
+const MP={
+  "Abstract Artistic":"abstract artistic interpretation with painterly creative elements",
+  "Analog Film Grain":"analog film grain vintage photography aesthetic",
+  "Art Deco":"art deco geometric patterns and gold gilded luxury",
+  "Avant-Garde":"avant-garde experimental unconventional artistic style",
+  "Baroque Ornate":"baroque ornate lavishly detailed classical style",
+  "Bold Maximalist":"bold maximalist with rich layered opulent excess",
+  "Candy Pop":"candy pop bright sweet bubbly joyful energy",
+  "Cinematic Epic":"cinematic epic scale dramatic film-quality production",
+  "Clean Minimal":"clean minimalist precise modern simplicity",
+  "Cottagecore":"cottagecore whimsical nature-inspired cozy aesthetic",
+  "Cute Kawaii":"kawaii cute adorable rounded edges soft pastel energy",
+  "Dark Academia":"dark academia moody scholarly vintage richness",
+  "Dark Luxe":"dark luxury deep rich tones high-end opulence",
+  "Editorial Fashion":"editorial high-fashion avant-garde magazine quality",
+  "Elegant Luxurious":"elegant luxurious refined sophistication premium quality",
+  "Film Noir":"film noir dramatic shadows high-contrast classic cinema",
+  "Grunge Edgy":"grunge edgy distressed textures rebellious urban style",
+  "High Fashion":"high fashion couture editorial luxury runway sophistication",
+  "Holographic Iridescent":"holographic iridescent rainbow-shift prismatic color-changing",
+  "Hyper Realistic":"hyper-realistic ultra-detailed photographic precision",
+  "Manga Anime":"manga anime illustration style bold outlines expressive",
+  "Monochrome":"monochrome black and white dramatic tonal contrast",
+  "Neon Vibrant":"neon vibrant electric glowing illuminated energy",
+  "Nostalgic Vintage":"nostalgic vintage retro warmth classic timeless appeal",
+  "Painterly Artistic":"painterly texture visible brushwork fine art quality",
+  "Pastel Soft":"pastel soft palette gentle dreamy delicate tones",
+  "Playful Fun":"playful fun energetic whimsical joyful spirit",
+  "Punk Rock":"punk rock attitude bold rebellious high-energy edge",
+  "Retro Futuristic":"retro-futuristic blend of vintage nostalgia and sci-fi"
+};
+const MALE_HAIR=["None","Afro Natural","Bald / Shaved","Braids Cornrow Short","Buzz Cut Clean","Caesar Cut Modern","Comb Over Classic","Cornrows Traditional","Crew Cut Military","Curly Natural Defined","Dreadlocks Long","Fade High Tight","Fade Low Tapered","Fade Mid Taper","French Crop Textured","Fringe Curtains Middle","High Top Flat","Ivy League Classic","Kinky Coil Natural","Man Bun Neat","Mohawk Bold","Mullet Modern","Pompadour Classic","Quiff Textured","Shag Cut Layered","Side Part Classic","Slick Back Wet","Taper Fade Clean","Textured Waves","Waves 360 Smooth"];
+const FEMALE_HAIR=["None","Afro Puff High","Baby Bangs","Beach Waves Long","Big Chop Natural","Body Wave Lob","Box Braids Long","Box Braids Short","Braided Crown Updo","Butterfly Locs Medium","Classic Bob","Cornrow Updo","Curly Pixie Cut","Dutch Braid Updo","Faux Locs Long","French Twist Elegant","Half Up Half Down","High Bun Sleek","Kinky Coil Natural","Long Straight Silk","Loose Waves Long","Low Bun Chic","Messy Bun Casual","Micro Braids Long","Pixie Cut Bold","Senegalese Twists","Sleek High Ponytail","Sleek Low Ponytail","Space Buns","Textured Lob"];
+const MALE_OUTFITS=["None","Athletic Streetwear Set","Blazer Casual Smart","Board Shorts Beach","Business Casual Chic","Business Formal Suit","Cargo Pants Tee","Casual Jeans White Tee","Denim Double Set","Denim Jacket Jeans","Designer Athleisure","Designer Streetwear","Formal Tuxedo Black Tie","Graphic Tee Hoodie","Graphic Tee Joggers","Gym Fit Activewear","Hawaiian Shirt Shorts","Hip Hop Street Style","Leather Jacket Jeans","Linen Summer Set","Luxury Lounge Set","Military Jacket Cargos","Overalls Streetwear","Polo Chinos Classic","Preppy Button-Down Set","Robe Luxury Velvet","Streetwear Oversized","Techwear Tactical","Track Suit Sleek","Vintage Band Tee Jeans"];
+const FEMALE_OUTFITS=["None","Baby Doll Mini Dress","Biker Shorts Set","Blazer and Mini Skirt","Bodycon Dress Fitted","Bodysuit and Jeans","Bustier Wide Leg Set","Cape Gown Formal","Cargo Pants Crop Top","Cocktail Dress Classic","Corset Skirt Coord","Crop Top Midi Skirt","Cut-Out Dress Bold","Designer Evening Gown","Floral Midi Dress","Halter Neck Dress","High-Low Hem Dress","Jumpsuit Belted","Leather Mini Dress","Little Black Dress","Maxi Boho Dress","Monochrome Power Suit","Off-Shoulder Gown","Power Blazer Set","Ruffled Statement Gown","Sequin Gown Formal","Silk Slip Dress","Tracksuit Glam Set","Two-Piece Coord Set","Wrap Dress Elegant"];
+const MALE_ACC=["None","Aviator Sunglasses","Baseball Cap","Beanie Knit","Chain Necklace Gold","Classic Luxury Watch","Cross Body Bag","Cuban Link Chain","Designer Belt","Designer Sneakers","Diamond Stud Earrings","Dog Tags Stainless","Fedora Hat","Fitted Cap Snapback","Gold Bracelet Stack","Gold Rings Multiple","Graduation Cap","Grillz Gold","Headband Athletic","Keychain Designer","Medallion Necklace","Neck Scarf Silk","Round Lens Sunglasses","Signet Ring Classic","Ski Goggles","Statement Luxury Watch","Sunglasses Oversized","Thick Frame Glasses","Trucker Hat","Vintage Watch Leather"];
+const FEMALE_ACC=["None","Arm Cuff Gold Bold","Bold Statement Earrings","Bridal Veil Delicate","Chandelier Earrings","Charm Bracelet Stack","Choker Necklace","Cocktail Ring Oversized","Crystal Crown Tiara","Designer Bag Clutch","Diamond Pendant Necklace","Drop Pearl Earrings","Ear Cuff Sculptural","Floral Headpiece","Gem Sunglasses Encrusted","Gold Hoop Earrings Large","Hair Jewel Pins","Halo Headband","Hand Chain Jewelry","Layered Necklace Stack","Long Pendant Earrings","Luxury Chain Bag","Medallion Collar Necklace","Nose Ring Hoop","Oversized Cat Eye Sunnies","Pearl Ear Cuff","Rhinestone Body Chain","Snake Arm Cuff","Statement Brooch","Tennis Bracelet Diamond"];
+const MALE_SHOES=["None","Athletic Trainers","Chelsea Boots","Combat Boots","Designer Loafers","High Top Sneakers","Leather Dress Shoes","Luxury Slides","Running Shoes","Streetwear Sneakers","Tactical Boots","White Sneakers Clean"];
+const FEMALE_SHOES=["None","Ankle Strap Heels","Classic Pumps","Designer Heels","Knee-High Boots","Platform Heels","Pointed Toe Heels","Slide Sandals","Sparkle Heels","Stiletto Heels","Strappy Sandals","Wedge Heels"];
+const FEMALE_LASHES=["None","Bottom Lash Detail","Cat Eye Wispy","Doll Eye Full","Dramatic Volume","Feathered Wispy","Long Fluttery","Natural Soft","Spiky Manga","Thick Glam"];
+const FEMALE_EYEBROWS=["None","Arched Defined","Bold Sculpted","Feathered Fluffy","Soft Natural","Straight Clean","Thin Vintage"];
+const FEMALE_MAKEUP=["None","Bold Red Lip Glam","Bronzed Goddess","Classic Soft Glam","Cut Crease Glam","Glossy Nude Glam","Monochrome Pink Glam","Natural Dewy","Smoky Eye Glam","Sparkle Lid Glam"];
+const FEMALE_NAILS=["None","Almond French Tips","Chrome Nails","Coffin Long Glam","Glossy Nude Nails","Glitter Accent Nails","Rhinestone Nails","Short Square Clean","Stiletto Nails","V-French Tips"];
+const FEMALE_HAIR_GEMS=["None","Crystal Hair Pins","Gem Barrette","Gold Hair Cuffs","Pearl Hair Pins","Rhinestone Clips","Sparkle Bobby Pins"];
+const FEMALE_EARRINGS=["None","Chandelier Earrings","Diamond Studs","Drop Pearl Earrings","Ear Cuff Sculptural","Gold Hoop Earrings Large","Long Pendant Earrings","Statement Earrings"];
+const SKIN_TONES=["None","Almond Warm","Bronze Deep","Bronze Medium","Caramel Rich","Chestnut Brown","Chocolate Deep","Dark Espresso","Dark Mahogany","Deep Brown","Deep Ebony","Fair Cool Porcelain","Fair Neutral","Fair Warm Ivory","Golden Tan","Honey Warm","Ivory Cool","Ivory Warm","Light Beige","Light Brown","Light Golden","Medium Beige","Medium Brown","Medium Neutral","Mocha Warm","Ochre Golden","Olive Medium","Peach Fair","Sable Deep","Toffee Medium"];
+const EXPRESSIONS=["None","Assertive Commanding","Bold Confident","Bright Joyful","Calm Serene","Contemplative Deep","Defiant Strong","Dreamy Soft","Ecstatic Happy","Empowered Fierce","Ethereal Mysterious","Focused Intense","Gentle Warm","Glamorous Poised","Graceful Elegant","Intense Brooding","Joyful Laughing","Loving Tender","Mischievous Playful","Mysterious Alluring","Peaceful Blissful","Playful Cheeky","Powerful Bold","Proud Regal","Radiant Glowing","Serene Zen","Smoldering Sultry","Soft Thoughtful","Strong Determined","Triumphant Victorious"];
+const POSES=["None","Action Dynamic","Arms Crossed Power","Back to Camera","Candid Natural","Catwalk Stride","Crouching Low","Dance Movement","Dramatic Lean","Editorial High Fashion","Floating Weightless","Flying Dynamic","From Below Heroic","Full Recline Laying","Hand on Hip Classic","Hand to Face Pensive","Jumping Mid-Air","Kneeling Down","Laying Down Glamour","Leaning Against Wall","Looking Away Wistful","Looking Over Shoulder","Over Shoulder Glance","Peering Through Fingers","Profile Side View","Reaching Upward","Seated Crossed Legs","Silhouette Power","Standing Tall Regal","Walking Toward Camera"];
+const MERGE_OBJECT_FONT=["None", "Donut letters (glaze + sprinkles)", "Pizza letters (melted cheese + toppings)", "Lollipop letters (swirl candy shine)", "Candy letters (hard candy gloss)", "Ice cream letters (soft melt drips)", "Chocolate drip letters", "Cake letters (frosting + layers)", "Cookie letters (chocolate chips + crumbs)", "Gummy bear letters (translucent jelly)", "Cotton candy letters (fluffy sugar clouds)", "Marshmallow letters (soft puffy texture)", "Caramel letters (sticky golden drips)", "Popcorn letters (buttery kernels)", "Pretzel letters (twisted dough + salt)", "Bubblegum letters (shiny pink spheres)", "Honey letters (golden sticky drizzle)", "Fruit slice letters (citrus segments)", "Macaron letters (sandwich cookies)", "Pencil letters (wood + sharpened tips + erasers)", "Pen letters (glossy plastic + ink tips)", "Marker letters (bold ink texture)", "Crayon letters (waxy texture)", "Chalk letters (dusty chalkboard)", "Paint brush letters (bristles + paint drips)", "Watercolor letters (bleeding pigments)", "Oil paint letters (thick impasto texture)", "Spray paint letters (graffiti drips)", "Colored pencil letters (wood casing)", "Pastel letters (soft dusty finish)", "Glue stick letters (translucent adhesive)", "Balloon letters (latex + strings)", "Foil balloon letters (shiny metallic)", "Confetti letters (colorful paper pieces)", "Ribbon letters (satin flowing bows)", "Streamer letters (twisted crepe paper)", "Candle letters (wax + flame)", "Gift wrap letters (shiny paper + bows)", "Party hat letters (cone shapes)", "Pi\u00f1ata letters (papier-m\u00e2ch\u00e9 texture)", "Fur letters (fluffy strands)", "Plush letters (soft toy fabric)", "Velvet letters (luxury fabric)", "Felt letters (craft fabric texture)", "Knitted letters (yarn texture + stitches)", "Cotton letters (soft fluffy clouds)", "Silk letters (smooth sheen fabric)", "Fleece letters (cozy soft texture)", "Denim letters (jean fabric + stitching)", "Leather letters (textured hide)", "Lace letters (delicate pattern)", "Jelly letters (transparent gel)", "Glass letters (clear + refraction)", "Chrome letters (mirror metal)", "Metallic foil letters", "Glitter letters", "Diamond letters (faceted crystal)", "Gold letters (shiny precious metal)", "Silver letters (polished metal)", "Sequin letters (overlapping discs)", "Holographic letters (rainbow iridescence)", "Pearl letters (lustrous spheres)", "Crystal letters (transparent gems)", "Mirror letters (perfect reflection)", "Metallic shimmer letters", "Inflated bubble letters (3D puffy)", "Soap bubble letters (transparent spheres)", "LEGO brick letters (plastic blocks)", "Toy block letters (wooden alphabet blocks)", "Rubber duck letters (yellow squeaky toys)", "Slime letters (glossy stretchy goo)", "Play-Doh letters (clay texture)", "Puzzle piece letters (jigsaw interlocking)", "Flower letters (petals + blooms)", "Leaf letters (green foliage)", "Wood letters (natural grain texture)", "Stone letters (rock texture)", "Cloud letters (fluffy white vapor)", "Water letters (liquid droplets)", "Ice letters (frozen crystals)", "Fire letters (flames + embers)", "Sand letters (beach granules)", "Grass letters (green blades)", "Coral letters (underwater texture)", "Neon tube letters (glowing lights)", "LED letters (bright digital pixels)", "Concrete letters (rough cement)", "Brick letters (stacked masonry)", "Steel letters (industrial metal)", "Copper letters (oxidized patina)", "Plastic letters (glossy smooth finish)", "Circuit board letters (tech components)", "Chain letters (interlocking links)"];
+const MERGE_CONSTRUCTION=["None", "Fully shaped from the objects/material", "Letters wrapped with the objects/material", "Objects embedded inside the letters", "Object outline with solid fill", "Solid letters with object accents"];
+const MERGE_REALISM=["None", "Cartoon", "Semi-realistic", "Hyper-realistic"];
+const MERGE_FINISH=["None", "High-gloss shine", "Matte soft-touch", "Studio lighting", "Soft glow", "Reflective highlights", "Sparkles", "Subtle glitter", "Neon glow", "Iridescent shimmer", "Pearlescent finish", "Metallic sheen", "Holographic rainbow", "Frosted glass", "Satin finish", "Velvet texture", "Chrome mirror", "Soft rim lighting", "Dramatic spotlight", "Backlit glow", "Gradient lighting", "Candy gloss", "Wet shine", "Dusty matte", "Brushed metal", "Opal luminescence"];
+const MERGE_THICKNESS=["None", "Thin", "Medium", "Extra thick"];
+const MERGE_EDGE=["None", "Rounded", "Soft bevel", "Sharp", "Puffy"];
+const MERGE_SHADOW=["None", "Soft shadow", "Drop shadow", "Glow"];
+const MERGE_DRIPS=["Off", "On (subtle)", "On (dramatic)"];
+const MERGE_COLOR_CHOICES=["None", "hot pink", "bubblegum pink", "pastel pink", "blush pink", "rose pink", "coral", "salmon", "cherry red", "crimson", "ruby red", "burgundy", "magenta", "fuchsia", "pastel lavender", "lilac", "purple", "violet", "plum", "orchid", "periwinkle", "amethyst", "baby blue", "sky blue", "powder blue", "turquoise", "teal", "aqua", "cobalt blue", "navy blue", "royal blue", "electric blue", "cyan", "mint green", "pastel green", "sage green", "lime green", "emerald green", "forest green", "olive green", "neon green", "lemon yellow", "butter yellow", "golden yellow", "mustard yellow", "peach", "apricot", "tangerine", "orange", "burnt orange", "beige", "cream", "ivory", "tan", "caramel", "chocolate brown", "coffee brown", "white", "off-white", "light gray", "silver gray", "charcoal gray", "black", "chrome", "metallic gold", "rose gold", "metallic silver", "holographic", "iridescent", "rainbow", "glitter"];
+const MERGE_DECOR=["None", "Sprinkles", "Bite marks", "Cheese pulls", "Candy toppings", "Chocolate chips", "Whipped cream swirls", "Caramel drizzle", "Sugar crystals", "Rainbow jimmies", "Crushed cookies", "Hearts", "Stars", "Bows", "Ribbons", "Flowers", "Butterflies", "Clouds", "Rainbows", "Moons", "Smiley faces", "Daisies", "Cherries", "Pearls", "Studs", "Glitter dust", "Rhinestones", "Gems", "Crystals", "Sequins", "Gold flakes", "Silver dust", "Holographic confetti", "Diamond accents", "Ink splashes", "Paint splatters", "Brush strokes", "Watercolor bleeds", "Chalk dust", "Pencil shavings", "Crayon marks", "Strings (balloons)", "Confetti pieces", "Streamers", "Party streamers", "Fireworks", "Bubbles", "Candle flames", "Leaves", "Vines", "Petals", "Moss texture", "Wood grain", "Stone texture", "Water drops", "Ice crystals", "Snowflakes", "Polka dots", "Stripes", "Checkered pattern", "Stitching", "Buttons", "Patches", "Stickers", "Safety pins"];
+const MERGE_MOOD=["None", "Playful", "Cute", "Whimsical", "Bold", "Kid-friendly", "Girly glam", "Cozy", "Edgy-cool", "Dreamy", "Kawaii", "Retro", "Vintage", "Modern minimalist", "Pastel soft", "Vibrant neon", "Elegant", "Luxurious", "Festive", "Romantic", "Fun party", "Magical", "Fantasy", "Futuristic", "Cyberpunk", "Vaporwave", "Y2K aesthetic", "Cottagecore", "Boho chic", "Industrial", "Grunge", "Pop art", "Art deco", "Tropical", "Zen calming", "Spooky Halloween", "Christmas festive", "Summer vibes", "Winter wonderland"];
+function getMergeData(){
+  return {
+    objectFont:getVal("merge-object-font"),
+    construction:getVal("merge-construction"),
+    realism:getVal("merge-realism"),
+    finish:getVal("merge-finish"),
+    thickness:getVal("merge-thickness"),
+    edge:getVal("merge-edge"),
+    shadow:getVal("merge-shadow"),
+    drips:getVal("merge-drips"),
+    primary:getVal("merge-primary"),
+    secondary:getVal("merge-secondary"),
+    accent:getVal("merge-accent"),
+    decor:getVal("merge-decor"),
+    mood:getVal("merge-mood")
+  };
+}
+function buildMergeLines(){
+  const m=getMergeData();
+  const parts=[];
+  if(m.construction!=="None")parts.push(m.construction.toLowerCase());
+  if(m.finish!=="None")parts.push(m.finish.toLowerCase());
+  if(m.thickness!=="None")parts.push(`${m.thickness.toLowerCase()} letter depth`);
+  if(m.edge!=="None")parts.push(`${m.edge.toLowerCase()} edges`);
+  if(m.shadow!=="None")parts.push(`${m.shadow.toLowerCase()} shadow treatment`);
+  if(m.drips!=="Off")parts.push(`drips/melts ${m.drips.toLowerCase()}`);
+  const colors=[];
+  if(m.primary!=="None")colors.push(`primary ${m.primary}`);
+  if(m.secondary!=="None")colors.push(`secondary ${m.secondary}`);
+  if(m.accent!=="None")colors.push(`accent ${m.accent}`);
+  if(colors.length)parts.push(`color story: ${colors.join(", ")}`);
+  if(m.decor!=="None")parts.push(`decorated with ${m.decor.toLowerCase()}`);
+  if(m.mood!=="None")parts.push(`${m.mood.toLowerCase()} aesthetic`);
+  return parts;
+}
+
+function resetMergeControls(){
+  [
+    "merge-object-font","merge-construction","merge-realism","merge-finish","merge-thickness",
+    "merge-edge","merge-shadow","merge-drips","merge-primary","merge-secondary",
+    "merge-accent","merge-decor","merge-mood"
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(id==="merge-drips") el.value="Off";
+    else el.value="None";
+  });
+}
+
+function getRenderStyleTag(realism){
+  if(realism==="Cartoon") return "stylized cartoon render";
+  if(realism==="Semi-realistic") return "semi-realistic render";
+  return "hyper-realistic render";
+}
+
+function buildCoreMaterialDescription(){
+  const parts=getStyleParts();
+  const merge=getMergeData();
+  const styleNames=[...selectedStyles].map(id=>{
+    const found=materialStyles[selectedCategory].styles.find(s=>s.id===id);
+    return found?found.name:id;
+  });
+  const base=parts.length===1
+    ? parts[0]
+    : `${parts[0]}, blended with ${styleNames.slice(1).map(name=>`${name} texture`).join(" and ")}`;
+  if(merge.objectFont!=="None"){
+    return `${base}, with ${merge.objectFont.toLowerCase()} influence`;
+  }
+  return base;
+}
+
+function getEffectiveAtmosphere(){
+  const clean=getCleanSelections();
+  return clean.atmosphere || "Glamorous High Luxury";
+}
+
+const CLEANUP_BG_FALLBACKS={
+  earthy:"Textured Stone Wall",
+  nature:"Forest and Nature Canopy",
+  luxury:"Dramatic Dark Studio",
+  playful:"Candy and Sweet Shop",
+  futuristic:"Neon Glow City",
+  aquatic:"Beach and Ocean Waves"
+};
+
+function textHasAny(text, terms){
+  const t=(text||"").toLowerCase();
+  return terms.some(term=>t.includes(term));
+}
+
+function getSmartContext(){
+  const merge=getMergeData();
+  const styleParts=getStyleParts().join(" ").toLowerCase();
+  const styleIds=[...selectedStyles].join(" ").toLowerCase();
+  const objectFont=(merge.objectFont||"").toLowerCase();
+  const modifiers=[...selectedModifiers].join(" ").toLowerCase();
+  const combined=`${selectedCategory} ${styleParts} ${styleIds} ${objectFont} ${modifiers}`;
+  const signals={
+    earthy:textHasAny(combined,["stone","moss","wood","leaf","flower","grass","coral","sand","pebble","rock","nature"]),
+    playful:textHasAny(combined,["donut","candy","cake","cookie","gummy","ice cream","icecream","balloon","confetti","bubble","kawaii","cute"]),
+    luxury:textHasAny(combined,["gold","diamond","velvet","luxury","baroque","dark luxe","high fashion","elegant"]),
+    futuristic:textHasAny(combined,["chrome","holographic","neon","circuit","retro futuristic","sci-fi"]),
+    aquatic:textHasAny(combined,["water","ocean","beach","shell","coral","aqua"]),
+    darkAcademic:textHasAny(combined,["dark academia","gothic","baroque","stone","moss","velvet","film noir"])
+  };
+  return {merge, combined, signals};
+}
+
+function normalizeAtmosphere(atm, ctx){
+  ctx=ctx||{}; ctx.merge=ctx.merge||{}; ctx.signals=ctx.signals||{};
+  const m=(ctx.merge.mood||"").toLowerCase();
+  if(atm && atm!=="None"){
+    if(ctx.signals.earthy && /joyful bright playful/i.test(atm)) return ctx.signals.darkAcademic?"Dark and Dramatic":"Peaceful Serene Nature";
+    return atm;
+  }
+  if(ctx.signals.futuristic) return "Futuristic Sci-Fi";
+  if(ctx.signals.playful) return "Joyful Bright Playful";
+  if(ctx.signals.earthy && ctx.signals.darkAcademic) return "Dark and Dramatic";
+  if(ctx.signals.earthy) return "Peaceful Serene Nature";
+  if(ctx.signals.luxury) return "Glamorous High Luxury";
+  if(m.includes("dark") || m.includes("grunge") || m.includes("industrial")) return "Dark and Dramatic";
+  if(m.includes("dream") || m.includes("magical") || m.includes("fantasy")) return "Dreamy Ethereal Soft";
+  if(m.includes("cute") || m.includes("playful") || m.includes("kawaii") || m.includes("festive")) return "Joyful Bright Playful";
+  if(m.includes("elegant") || m.includes("luxurious") || m.includes("girly glam")) return "Glamorous High Luxury";
+  return "Glamorous High Luxury";
+}
+
+function normalizeBackground(bg, atmosphere, ctx){
+  if(bg==="None" || !bg) return CLEANUP_BG_FALLBACKS[
+    ctx.signals.futuristic ? "futuristic" :
+    ctx.signals.playful ? "playful" :
+    ctx.signals.aquatic ? "aquatic" :
+    ctx.signals.earthy && ctx.signals.darkAcademic ? "luxury" :
+    ctx.signals.earthy ? "earthy" :
+    ctx.signals.luxury ? "luxury" : "luxury"
+  ];
+  if(ctx.signals.earthy && /Candy and Sweet Shop|Confetti Explosion/i.test(bg)){
+    return ctx.signals.darkAcademic ? "Dramatic Dark Studio" : "Textured Stone Wall";
+  }
+  if(ctx.signals.futuristic && /Cherry Blossom Garden|Forest and Nature Canopy|Candy and Sweet Shop/i.test(bg)){
+    return "Neon Glow City";
+  }
+  if(ctx.signals.playful && /Dramatic Dark Studio|Textured Stone Wall/i.test(bg) && !ctx.signals.darkAcademic){
+    return "Candy and Sweet Shop";
+  }
+  if(/Dark and Dramatic|Glamorous High Luxury|Gothic/i.test(atmosphere) && /Candy and Sweet Shop|Confetti Explosion/i.test(bg) && !ctx.signals.playful){
+    return "Dramatic Dark Studio";
+  }
+  return bg;
+}
+
+function normalizeLens(angle, lens, ctx){
+  if(!lens || lens==="None"){
+    if(angle==="Bust Shot" || angle==="Shoulder Level" || angle==="Close-Up" || angle==="Medium Close-Up") return "85mm Portrait Prime";
+    return "50mm Standard";
+  }
+  if((angle==="Bust Shot" || angle==="Shoulder Level" || angle==="Close-Up" || angle==="Medium Close-Up") &&
+     /12mm|14mm|16mm|Fisheye|20mm Wide Angle/i.test(lens)){
+    return "85mm Portrait Prime";
+  }
+  if((angle==="Bird's Eye View" || angle==="Extreme Wide Shot" || angle==="Establishing Shot") &&
+     /85mm|105mm|135mm|200mm/i.test(lens)){
+    return "35mm Cinematic Wide";
+  }
+  return lens;
+}
+
+function normalizePalette(pal, ctx){
+  if(pal && pal!=="None" && pal!=="Custom Brand Colors") return pal;
+  if(ctx.signals.futuristic) return "Blue and Teal Aquatic";
+  if(ctx.signals.playful) return "Candy Pink Pastel";
+  if(ctx.signals.earthy && ctx.signals.darkAcademic) return "Royal Blue Deep";
+  if(ctx.signals.earthy) return "Earth Tones Natural";
+  if(ctx.signals.luxury) return "Black and Gold Classic";
+  return pal==="Custom Brand Colors" ? pal : "Royal Blue Deep";
+}
+
+function normalizeAnimalPrint(ap, ctx){
+  if(ap==="None" || !ap) return "None";
+  if(ctx.signals.earthy && /Holographic|Orca|Koi/i.test(ap)) return "Jaguar Rosette Spots";
+  if(ctx.signals.playful && /Jaguar|Leopard|Tiger|Snow Leopard/i.test(ap) && !ctx.signals.darkAcademic) return "None";
+  return ap;
+}
+
+function getCleanSelections(){
+  const ctx=getSmartContext();
+  const angle=getVal("camera-angle");
+  const lens=normalizeLens(angle,getVal("lens-type"),ctx);
+  const atmosphere=normalizeAtmosphere(getVal("atmosphere"),ctx);
+  const background=normalizeBackground(getVal("background-select"), atmosphere, ctx);
+  const colorPalette=normalizePalette(getVal("color-palette"), ctx);
+  const animalPrint=normalizeAnimalPrint(getVal("animal-print"), ctx);
+  const lightSource=(getVal("light-source")==="None" && ctx.signals.futuristic) ? "LED Color Panel" :
+                    (getVal("light-source")==="None" && ctx.signals.earthy && ctx.signals.darkAcademic) ? "Dramatic Spotlight" :
+                    getVal("light-source");
+  const lightDirection=(getVal("light-direction")==="None" && lightSource!=="None") ?
+                       (ctx.signals.earthy && ctx.signals.darkAcademic ? "Contre-Jour Back" : "45° Front Right") :
+                       getVal("light-direction");
+  const shadowStyle=(getVal("shadow-style")==="None" && atmosphere==="Dark and Dramatic") ? "Deep Black Shadow" : getVal("shadow-style");
+  return {ctx, angle, lens, atmosphere, background, colorPalette, animalPrint, lightSource, lightDirection, shadowStyle};
+}
+
+const TEXT_SUGGESTIONS=["HELLO","LOVE","DREAM","CREATE","MAGIC","HAPPY","SWEET","SHINE","BLOOM","GLOW","SPARKLE","JOY","WONDER","BRIGHT","FRESH","COOL","QUEEN","SLAY","GLAM","RISE","REIGN","ICONIC","BOSS","FIERCE","BOLD","FREE","WILD","SHINE","THRIVE","WIN"];
+const UNIQUE_FACES=["angular defined jawline with sculpted high cheekbones","soft rounded facial features with luminous doe eyes","refined oval face with strong brow and full lips","heart-shaped face with wide expressive eyes and pointed chin","statuesque features with long neck and symmetrical bone structure","bold square jaw with piercing gaze and thick lashes","petite delicate features with button nose and wide bright eyes","diamond face shape with sharp defined angles","broad strong facial structure with warm confident expression","long elegant face with deep-set eyes and prominent cheekbones"];
+const UNIQUE_STYLING=["skin luminous and dewy with glass-skin finish","bold graphic liner with deep matte sculpted lips","fresh no-makeup makeup with naturally glowing skin","editorial avant-garde makeup with artistic sculptural elements","classic Hollywood glamour with heavy contouring and red lip","ethereal soft-focus skin with iridescent pastel eyeshadow","intense smoky eye with bare luminous skin","sun-kissed bronzed glow with glossy peach lip","monochromatic makeup with a single bold accent color","high-shine metallic makeup with foil-finish reflective elements"];
+const MUSIC_MOODS={
+  "Glamorous High Luxury":"Cinematic orchestral strings with soft piano — 70–80 BPM (Think: luxury brand runway)",
+  "Futuristic Sci-Fi":"Pulsing electronic synth with driving bass — 120–130 BPM (Think: Daft Punk aesthetic)",
+  "Royal Opulent Majestic":"Grand orchestral with choir swell — 60–75 BPM (Think: epic coronation fanfare)",
+  "Joyful Bright Playful":"Upbeat pop with bouncy percussion — 120–130 BPM (Think: trending TikTok bop)",
+  "Dark and Dramatic":"Dark cinematic minimal tension — 55–70 BPM (Think: Hans Zimmer suspense)",
+  "Dreamy Ethereal Soft":"Ambient ethereal with breathy vocals — 70–80 BPM (Think: Lana Del Rey atmospheric)",
+  "Cozy Warm Intimate":"Soft acoustic with warm strings — 75–85 BPM (Think: indie folk cozy vibes)",
+  "Peaceful Serene Nature":"Natural ambient with flute and birds — 60–70 BPM (Think: meditation healing music)",
+  "Romantic Soft Dreamy":"Gentle piano with soft strings — 65–80 BPM (Think: romantic ballad instrumental)",
+  "Powerful Bold Strong":"Hard-hitting trap or hip-hop — 140–150 BPM (Think: power anthem banger)",
+  "Streetwear Cool Urban":"Lo-fi hip-hop or chill trap — 90–100 BPM (Think: ASAP Rocky laid-back cool)",
+  "Magical Sparkle":"Whimsical orchestral with bells and harp — 100–110 BPM (Think: enchanted fairy tale)",
+  "Nostalgic Vintage":"Warm vintage jazz or R&B — 80–95 BPM (Think: retro soul classic)",
+  "Gothic Dark Romance":"Dark classical piano with cello — 60–70 BPM (Think: dark academia dramatic)",
+  "default":"Cinematic ambient with soft percussion — 80–100 BPM · Royalty-free via Epidemic Sound / Artlist"
+};
+const SMART_BG={
+  typography:{default:"Diamond Sparkle Shower"},
+  food:{default:"Candy and Sweet Shop",donut:"Candy and Sweet Shop",candy:"Confetti Explosion",chocolate:"Dramatic Dark Studio",pizza:"Brick Urban Wall",gummy:"Candy and Sweet Shop",cookie:"Bokeh Soft Lights",icecream:"Candy and Sweet Shop",cake:"Confetti Explosion",dripping:"Dramatic Dark Studio"},
+  materials:{default:"Diamond Sparkle Shower",chrome:"Neon Glow City",gold:"Diamond Sparkle Shower",neon:"Neon Glow City",holographic:"Aurora Borealis Sky",glass:"Crystal and Gemstone Cave",diamond:"Crystal and Gemstone Cave",velvet:"Dramatic Dark Studio",silk:"Dramatic Dark Studio",marble:"Marble Luxury Surface",pearl:"Bokeh Soft Lights",fur:"Forest and Nature Canopy",concrete:"Brick Urban Wall",rust:"Brick Urban Wall",copper:"Sunset Horizon Glow",silver:"Glitter and Sequin Rain",leather:"Dramatic Dark Studio"},
+  objects:{default:"Clean White Studio","crystal-ball":"Deep Space Galaxy",gem:"Crystal and Gemstone Cave",candle:"Dramatic Dark Studio",balloon:"Cloud and Sky Dreamscape",feather:"Cloud and Sky Dreamscape",chain:"Diamond Sparkle Shower",potion:"Crystal and Gemstone Cave",ribbon:"Cherry Blossom Garden",shell:"Beach and Ocean Waves"},
+  nature:{default:"Forest and Nature Canopy",flower:"Cherry Blossom Garden",water:"Beach and Ocean Waves",fire:"Fire and Flame Wall",cloud:"Cloud and Sky Dreamscape",stone:"Textured Stone Wall",leaves:"Forest and Nature Canopy",moss:"Forest and Nature Canopy",wood:"Forest and Nature Canopy"}
+};
+
+// ═══════════ MATERIAL STYLES ═══════════
+const materialStyles={
+  typography:{name:"✍️ Typography",styles:[
+    {id:"elegant-serif",emoji:"👑",name:"Elegant Serif",keywords:"elegant luxury serif typography with ornate decorative swirls, metallic diamond-encrusted lettering with silver and crystal texture, surrounded by rose-gold filigree vines and delicate botanical accents, soft glowing fairy lights, sparkling star flares, whimsical magical feminine aesthetic, high-end dreamy enchanted style"},
+    {id:"neon-script",emoji:"🌈",name:"Neon Script",keywords:"soft handwritten script typography with smooth rounded strokes, 3D pastel neon lettering with glowing rainbow gradient effect, glossy softly illuminated letters, surrounded by floating hearts tiny stars sparkles and glowing particles, dreamy night sky feel, gentle magical lighting, cozy comforting mood"},
+    {id:"glitter-script",emoji:"✨",name:"Glitter Script",keywords:"elegant handwritten script typography, 3D glitter-filled lettering with pink and lavender gradient, glossy neon glow with sparkling highlights, soft beveled edges and dimensional depth, surrounded by glowing butterflies fairy dust sparkles and magical light particles, iridescent sequin-style border"},
+    {id:"royal-glam",emoji:"👸",name:"Royal Glam",keywords:"bold uppercase display typography with thick lettering, 3D metallic black letters filled with subtle glitter texture, bright purple and pink neon outline with glowing highlights, crowned centerpiece in polished gold, text emerging from soft puffy cloud formations, deep royal purple palette with dramatic lighting, luxurious empowering glam aesthetic"},
+    {id:"gold-luxury",emoji:"🏆",name:"Gold Luxury",keywords:"elegant serif-script typography with decorative curls and flourishes, 3D polished gold lettering with smooth beveled edges and metallic shine, soft glowing highlights and subtle reflections, surrounded by flowing iridescent ribbon accents and ornate swirls, faceted gemstone heart elements, luxurious uplifting elegant aesthetic"},
+    {id:"diamond-marquee",emoji:"💎",name:"Diamond Marquee",keywords:"bold uppercase display typography with thick block lettering, 3D metallic silver letters encrusted with diamond and rhinestone texture, marquee-style pink sign frame with embedded glowing light bulbs, bright sparkle highlights and reflective crystal shine, surrounded by floating faceted diamonds"},
+    {id:"bubble-graffiti",emoji:"💗",name:"Bubble Graffiti",keywords:"bold bubble graffiti-style typography with thick rounded letters, hot pink lettering with glossy highlights and smooth vinyl finish, heavy black outline and deep drop shadow, playful exaggerated letterforms with hand-drawn feel, surrounded by cute heart doodles, modern pop-art aesthetic"},
+    {id:"sticker-icons",emoji:"💖",name:"Sticker Icons",keywords:"bold rounded typography combining playful script and chunky block letters, pink-to-gold gradient lettering with glossy highlights and soft shine, thick black sticker-style outline, cute illustrated icons including hearts diamonds and coin accents, sparkle details, modern sticker aesthetic"},
+    {id:"glitter-hearts",emoji:"💕",name:"Glitter Hearts",keywords:"bold cursive graffiti-style script typography with thick strokes, hot pink glitter-filled lettering with sparkling texture, strong black outline and subtle inner highlights, 3D dimensional lettering with sticker-style cutout look, surrounded by layered heart elements in glitter and leopard-print patterns"},
+    {id:"pastel-bubble",emoji:"🌸",name:"Pastel Bubble",keywords:"soft rounded bubble typography with smooth edges and playful letterforms, pastel neon lettering with gentle glowing effect, chalky airbrushed texture with soft matte finish, multicolor palette including pink mint green lavender and yellow, some letters feature subtle drip effects, surrounded by cute illustrated icons"},
+    {id:"rainbow-drip",emoji:"🌈",name:"Rainbow Drip",keywords:"bold uppercase block typography with thick letterforms, rainbow gradient lettering with vibrant saturated colors, strong black outline and shadow, dripping paint effects flowing from bottom of letters, paint splatter accents, dark background to make colors pop, high-energy street-art aesthetic"},
+    {id:"candy-plastic",emoji:"🍬",name:"Candy Plastic",keywords:"soft rounded bubble typography, 3D pastel lettering with candy-coated plastic appearance, bright cheerful color palette including pink yellow blue mint and lavender, gently beveled edges with soft highlights, cute decorative accents including sparkles hearts swooshes and stars, uplifting happy aesthetic"}
+  ]},
+  food:{name:"🍩 Food & Treats",styles:[
+    {id:"donut",emoji:"🍩",name:"Donut",keywords:"glazed donut texture, colorful sprinkles, dripping icing glaze, soft doughy surface"},
+    {id:"candy",emoji:"🍬",name:"Candy",keywords:"glossy hard candy surface, vibrant colorful sweets, smooth sugar coating, translucent candy texture"},
+    {id:"chocolate",emoji:"🍫",name:"Chocolate",keywords:"rich melted dark chocolate, glossy cocoa surface, dripping chocolate texture, warm brown tones"},
+    {id:"pizza",emoji:"🍕",name:"Pizza",keywords:"pizza dough texture, melted stretchy cheese, pepperoni toppings, baked crust surface"},
+    {id:"gummy",emoji:"🐻",name:"Gummy",keywords:"translucent gummy candy texture, jelly-like surface, chewy candy appearance, bright colors"},
+    {id:"cookie",emoji:"🍪",name:"Cookie",keywords:"chocolate chip cookie texture, baked golden surface, crumbly dough texture, warm tones"},
+    {id:"icecream",emoji:"🍦",name:"Ice Cream",keywords:"soft serve ice cream texture, melting cream surface, waffle cone texture accent, creamy pastel"},
+    {id:"cake",emoji:"🎂",name:"Cake",keywords:"frosted birthday cake texture, smooth buttercream surface, fondant decoration, layered sponge cake"},
+    {id:"dripping",emoji:"💧",name:"Dripping Paint",keywords:"dripping wet paint texture, liquid paint drips flowing down, glossy paint surface, vivid colors"}
+  ]},
+  materials:{name:"✨ Materials",styles:[
+    {id:"chrome",emoji:"🪞",name:"Chrome",keywords:"liquid chrome finish, mirror-like reflective metal surface, ultra-smooth metallic sheen"},
+    {id:"gold",emoji:"🏅",name:"Gold",keywords:"solid 24k gold surface, warm metallic shine, luxury polished golden texture"},
+    {id:"velvet",emoji:"🎭",name:"Velvet",keywords:"plush velvet fabric texture, soft rich material, deep color saturation, luxurious textile"},
+    {id:"fur",emoji:"🧸",name:"Fur",keywords:"fluffy soft fur texture, fuzzy natural material, plush furry surface"},
+    {id:"glass",emoji:"💎",name:"Glass",keywords:"transparent crystal clear glass, light refracting surface, clean smooth clarity"},
+    {id:"marble",emoji:"🏛️",name:"Marble",keywords:"polished marble stone, elegant veined surface, smooth luxury stone texture"},
+    {id:"neon",emoji:"💡",name:"Neon",keywords:"glowing neon tube letters, bright electric light, vibrant neon glow effect"},
+    {id:"holographic",emoji:"🌈",name:"Holographic",keywords:"iridescent holographic surface, rainbow color-shifting texture, prismatic light effect"},
+    {id:"silver",emoji:"🥈",name:"Silver",keywords:"polished sterling silver, shiny metallic finish, cool metallic luster"},
+    {id:"copper",emoji:"🟠",name:"Copper",keywords:"oxidized copper patina, warm metallic surface, bronze and copper tones"},
+    {id:"diamond",emoji:"💍",name:"Diamond",keywords:"crystalline diamond facets, brilliant cut gemstone surface, sparkling prismatic reflection"},
+    {id:"silk",emoji:"🎀",name:"Silk",keywords:"smooth silk fabric, luxurious satin sheen, flowing textile surface"},
+    {id:"leather",emoji:"👜",name:"Leather",keywords:"textured leather hide, embossed premium material, supple leather surface"},
+    {id:"concrete",emoji:"🏗️",name:"Concrete",keywords:"rough concrete texture, industrial cement surface, urban matte finish"},
+    {id:"rust",emoji:"🔩",name:"Rust",keywords:"weathered rust texture, corroded metal surface, orange oxidation patina"},
+    {id:"pearl",emoji:"🫧",name:"Pearl",keywords:"lustrous pearl surface, iridescent nacre texture, soft opalescent glow"}
+  ]},
+  objects:{name:"📦 Objects",styles:[
+    {id:"balloon",emoji:"🎈",name:"Balloon",keywords:"inflated foil mylar balloon, glossy reflective surface, floating balloon effect"},
+    {id:"pencil",emoji:"✏️",name:"Pencil",keywords:"wooden pencil texture, graphite tip, yellow lacquered pencil surface"},
+    {id:"crayon",emoji:"🖍️",name:"Crayon",keywords:"wax crayon texture, colorful drawing tool surface, waxy matte finish"},
+    {id:"lego",emoji:"🧱",name:"LEGO",keywords:"plastic interlocking building blocks, colorful molded plastic, toy block surface"},
+    {id:"yarn",emoji:"🧶",name:"Yarn",keywords:"soft knitted yarn texture, wool fiber surface, cozy fabric material"},
+    {id:"clay",emoji:"🎨",name:"Clay",keywords:"modeling clay texture, smooth sculpted surface, playdough material"},
+    {id:"paper",emoji:"📄",name:"Paper",keywords:"folded paper origami texture, crisp paper surface, paper craft aesthetic"},
+    {id:"rope",emoji:"🪢",name:"Rope",keywords:"twisted rope texture, braided nautical cord, woven fiber surface"},
+    {id:"candle",emoji:"🕯️",name:"Candle",keywords:"melting wax candle texture, dripping wax surface, warm flickering effect"},
+    {id:"soap",emoji:"🧼",name:"Soap",keywords:"soap bubble texture, foamy lather surface, translucent bubble effect"},
+    {id:"gem",emoji:"💎",name:"Gemstone",keywords:"precious faceted gemstone, sparkling crystal surface, multi-faceted jewel texture"},
+    {id:"ribbon",emoji:"🎀",name:"Ribbon",keywords:"satin ribbon bow texture, flowing silk ribbon, decorative gift ribbon surface"},
+    {id:"feather",emoji:"🪶",name:"Feather",keywords:"soft delicate feather texture, fluffy plumage surface, lightweight feather detail"},
+    {id:"shell",emoji:"🐚",name:"Seashell",keywords:"ocean seashell texture, spiral shell surface, pearlescent nautical detail"},
+    {id:"book",emoji:"📚",name:"Books",keywords:"stacked leather-bound book texture, paper page surface, vintage book spine detail"},
+    {id:"crystal-ball",emoji:"🔮",name:"Crystal Ball",keywords:"mystical crystal ball surface, glowing orb texture, magical transparent sphere"},
+    {id:"potion",emoji:"🧪",name:"Potion",keywords:"magical glass potion bottle, glowing liquid surface, mystical elixir texture"},
+    {id:"chain",emoji:"⛓️",name:"Chain",keywords:"metal chain links texture, gold chain surface, luxury linked jewelry"}
+  ]},
+  nature:{name:"🌸 Nature",styles:[
+    {id:"flower",emoji:"🌸",name:"Flowers",keywords:"fresh floral petals texture, botanical bloom surface, soft flower arrangement detail"},
+    {id:"leaves",emoji:"🍃",name:"Leaves",keywords:"natural green leaf texture, foliage surface, botanical plant detail"},
+    {id:"wood",emoji:"🪵",name:"Wood",keywords:"carved wood grain texture, rustic timber surface, natural wood knot detail"},
+    {id:"moss",emoji:"🌿",name:"Moss",keywords:"soft green moss texture, forest floor surface, organic natural covering"},
+    {id:"stone",emoji:"🪨",name:"Stone",keywords:"natural stone texture, rough rock surface, pebble and mineral detail"},
+    {id:"water",emoji:"💧",name:"Water",keywords:"liquid water splash texture, rippling aqua surface, clear water drop detail"},
+    {id:"cloud",emoji:"☁️",name:"Cloud",keywords:"fluffy cloud texture, soft cotton atmosphere, dreamy sky surface"},
+    {id:"fire",emoji:"🔥",name:"Fire",keywords:"blazing flame texture, burning fire surface, glowing ember detail, fiery glow"}
+  ]}
+};
+
+// ═══════════ PRESETS ═══════════
+const PRESETS=[
+  {id:"luxury-gold-queen",name:"Luxury Gold Queen",emoji:"👑",desc:"Rich gold elegance",category:"typography",styles:["gold-luxury"],cameraAngle:"Low Angle",lens:"85mm Portrait Prime",lightSource:"Golden Hour Sunlight",lightDir:"45° Front Right",shadow:"Soft Gradient Natural",atmosphere:"Glamorous High Luxury",background:"Diamond Sparkle Shower",colorPalette:"Gold and White Luxury",modifiers:["Elegant Luxurious","High Fashion"],animalPrint:"None"},
+  {id:"neon-nightlife",name:"Neon Nightlife",emoji:"🌈",desc:"Electric city vibes",category:"typography",styles:["neon-script"],cameraAngle:"Eye Level",lens:"35mm Cinematic Wide",lightSource:"Neon Sign Glow",lightDir:"Hard Left Side Split",shadow:"Colored Shadow Tinted",atmosphere:"Futuristic Sci-Fi",background:"Neon Glow City",colorPalette:"Rainbow Vibrant Full",modifiers:["Neon Vibrant","Retro Futuristic"],animalPrint:"None"},
+  {id:"royal-velvet-glam",name:"Royal Velvet Glam",emoji:"💜",desc:"Regal purple opulence",category:"typography",styles:["royal-glam"],cameraAngle:"Low Angle",lens:"50mm Standard",lightSource:"Dramatic Spotlight",lightDir:"Butterfly / Paramount",shadow:"Deep Black Shadow",atmosphere:"Royal Opulent Majestic",background:"Dramatic Dark Studio",colorPalette:"Purple and Pink Royal",modifiers:["Dark Luxe","Bold Maximalist"],animalPrint:"None"},
+  {id:"crystal-dreams",name:"Crystal Dreams",emoji:"💎",desc:"Ethereal glass magic",category:"materials",styles:["glass"],cameraAngle:"Eye Level",lens:"100mm Macro Detail",lightSource:"Bioluminescent Glow",lightDir:"Diffused All Around",shadow:"Feathered Gradient Edge",atmosphere:"Dreamy Ethereal Soft",background:"Crystal and Gemstone Cave",colorPalette:"Blue Ice Crystal",modifiers:["Holographic Iridescent","Elegant Luxurious"],animalPrint:"None"},
+  {id:"rose-gold-romance",name:"Rose Gold Romance",emoji:"🌹",desc:"Soft romantic shimmer",category:"typography",styles:["gold-luxury"],cameraAngle:"Medium Close-Up",lens:"85mm Portrait Prime",lightSource:"Golden Hour Sunlight",lightDir:"45° Front Left",shadow:"Soft Gradient Natural",atmosphere:"Romantic Soft Dreamy",background:"Cherry Blossom Garden",colorPalette:"Rose Gold Metallic",modifiers:["Elegant Luxurious","Painterly Artistic"],animalPrint:"None"},
+  {id:"wild-leopard-queen",name:"Wild Leopard Queen",emoji:"🐆",desc:"Fierce untamed glam",category:"typography",styles:["glitter-script"],cameraAngle:"Low Angle",lens:"50mm Standard",lightSource:"Dramatic Spotlight",lightDir:"Split Center Dramatic",shadow:"Hard Edge Crisp",atmosphere:"Powerful Bold Strong",background:"Fire and Flame Wall",colorPalette:"Hot Pink Glitter",modifiers:["Bold Maximalist","Dark Luxe"],animalPrint:"Leopard Classic"},
+  {id:"candy-pop-dream",name:"Candy Pop Dream",emoji:"🍬",desc:"Sweet joyful burst",category:"food",styles:["candy"],cameraAngle:"Eye Level",lens:"50mm Standard",lightSource:"Ring Light Even",lightDir:"Direct Front Flat",shadow:"No Shadow Flat",atmosphere:"Joyful Bright Playful",background:"Confetti Explosion",colorPalette:"Cotton Candy Rainbow",modifiers:["Candy Pop","Cute Kawaii"],animalPrint:"None"},
+  {id:"diamond-boss",name:"Diamond Boss",emoji:"💍",desc:"Rhinestone power move",category:"typography",styles:["diamond-marquee"],cameraAngle:"Low Angle",lens:"35mm Cinematic Wide",lightSource:"Overhead Softbox Studio",lightDir:"Overhead Center Top",shadow:"Complex Multi-Shadow",atmosphere:"Glamorous High Luxury",background:"Diamond Sparkle Shower",colorPalette:"Black and Gold Classic",modifiers:["Dark Luxe","Cinematic Epic"],animalPrint:"None"},
+  {id:"galaxy-midnight",name:"Galaxy Midnight",emoji:"🌌",desc:"Cosmic deep space",category:"materials",styles:["holographic"],cameraAngle:"Dutch Angle",lens:"24mm Cinematic Wide",lightSource:"Moonlight Soft",lightDir:"Backlighting Halo",shadow:"Vignette Fade Edges",atmosphere:"Futuristic Sci-Fi",background:"Deep Space Galaxy",colorPalette:"Blue and Teal Aquatic",modifiers:["Retro Futuristic","Holographic Iridescent"],animalPrint:"None"},
+  {id:"sweet-treat-shop",name:"Sweet Treat Shop",emoji:"🍩",desc:"Bakery bliss aesthetic",category:"food",styles:["donut"],cameraAngle:"Bird's Eye View",lens:"50mm Standard",lightSource:"Ring Light Even",lightDir:"Overhead Center Top",shadow:"Drop Shadow Clean",atmosphere:"Joyful Bright Playful",background:"Candy and Sweet Shop",colorPalette:"Candy Pink Pastel",modifiers:["Cute Kawaii","Candy Pop"],animalPrint:"None"},
+  {id:"natures-bloom",name:"Nature's Bloom",emoji:"🌸",desc:"Floral botanical beauty",category:"nature",styles:["flower"],cameraAngle:"Medium Shot",lens:"90mm Macro Close",lightSource:"Dappled Sunlight",lightDir:"45° Front Left",shadow:"Feathered Gradient Edge",atmosphere:"Peaceful Serene Nature",background:"Cherry Blossom Garden",colorPalette:"Coral and Peach",modifiers:["Cottagecore","Elegant Luxurious"],animalPrint:"None"},
+  {id:"chrome-future",name:"Chrome Future",emoji:"🤖",desc:"Metallic sci-fi edge",category:"materials",styles:["chrome"],cameraAngle:"Low Angle",lens:"24mm Cinematic Wide",lightSource:"LED Color Panel",lightDir:"Hard Left Side Split",shadow:"Hard Edge Crisp",atmosphere:"Futuristic Sci-Fi",background:"Neon Glow City",colorPalette:"Monochrome Black White",modifiers:["Retro Futuristic","High Fashion"],animalPrint:"None"},
+  {id:"velvet-sunset",name:"Velvet Sunset",emoji:"🌅",desc:"Warm luxe evening glow",category:"materials",styles:["velvet"],cameraAngle:"Shoulder Level",lens:"85mm Portrait Prime",lightSource:"Golden Hour Sunlight",lightDir:"Broad Right Side",shadow:"Cast Long Dramatic",atmosphere:"Cozy Warm Intimate",background:"Sunset Horizon Glow",colorPalette:"Sunset Orange Red",modifiers:["Elegant Luxurious","Painterly Artistic"],animalPrint:"None"},
+  {id:"ocean-goddess",name:"Ocean Goddess",emoji:"🌊",desc:"Aquatic coastal power",category:"nature",styles:["water"],cameraAngle:"Medium Wide Shot",lens:"35mm Cinematic Wide",lightSource:"Ambient Daylight Diffused",lightDir:"45° Above Left",shadow:"Reflected Ground",atmosphere:"Dreamy Ethereal Soft",background:"Beach and Ocean Waves",colorPalette:"Blue and Teal Aquatic",modifiers:["Elegant Luxurious","Holographic Iridescent"],animalPrint:"None"},
+  {id:"fire-ice-queen",name:"Fire & Ice Queen",emoji:"🔥",desc:"Elemental contradiction",category:"nature",styles:["fire"],cameraAngle:"Worm's Eye View",lens:"24mm Cinematic Wide",lightSource:"Dramatic Spotlight",lightDir:"Below Front Center",shadow:"Deep Black Shadow",atmosphere:"Dark and Dramatic",background:"Aurora Borealis Sky",colorPalette:"Blue Ice Crystal",modifiers:["Surreal Dreamlike","Cinematic Epic"],animalPrint:"None"}
+];
+
+// ═══════════ STATE ═══════════
+let selectedCategory="typography";
+let selectedStyles=new Set();
+let selectedModifiers=new Set();
+let selectedGender=null;
+const categoryNotes={typography:"",food:"",materials:"",objects:"",nature:""};
+const LOCKS={style:false,classic:false,camera:false,lighting:false,background:false,modifiers:false};
+let promptHistory=[];
+let historyOpen=false;
+let lastGeneratedType="photo";
+let currentSunoSections=null;
+let currentMarketingSections=null;
+
+// ═══════════ HELPERS ═══════════
+function buildSelect(id,arr){
+  const s=document.getElementById(id);
+  s.innerHTML="";
+  arr.forEach(v=>{const o=document.createElement("option");o.value=o.textContent=v;s.appendChild(o);});
+}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pickNonNone(arr){const a=arr.filter(x=>x!=="None");return a[Math.floor(Math.random()*a.length)];}
+
+// ═══════════ RANDOM MEMORY ═══════════
+const RANDOM_MEMORY_LIMIT = 500;
+const randomMemory = {};
+
+function memoryPick(key, arr, excludeValues=[]){
+  const blocked = new Set(excludeValues);
+  const pool = (arr || []).filter(v => v && !blocked.has(v));
+  if(!pool.length) return arr && arr.length ? arr[0] : "";
+
+  if(!randomMemory[key]) randomMemory[key] = [];
+  let history = randomMemory[key];
+
+  let available = pool.filter(v => !history.includes(v));
+
+  if(!available.length){
+    history = history.slice(-Math.max(0, RANDOM_MEMORY_LIMIT - pool.length + 1));
+    randomMemory[key] = history;
+    available = pool.filter(v => !history.includes(v));
+    if(!available.length) available = [...pool];
+  }
+
+  const choice = available[Math.floor(Math.random() * available.length)];
+  randomMemory[key].push(choice);
+
+  if(randomMemory[key].length > RANDOM_MEMORY_LIMIT){
+    randomMemory[key] = randomMemory[key].slice(-RANDOM_MEMORY_LIMIT);
+  }
+
+  return choice;
+}
+
+function memoryMultiPick(key, arr, count, excludeValues=[]){
+  const blocked = new Set(excludeValues);
+  const pool = (arr || []).filter(v => v && !blocked.has(v));
+  if(!pool.length) return [];
+  const maxCount = Math.max(1, Math.min(count || 1, pool.length));
+  const out = [];
+  const used = new Set();
+
+  while(out.length < maxCount){
+    const val = memoryPick(`${key}-${out.length}`, pool, []);
+    if(!used.has(val)){
+      used.add(val);
+      out.push(val);
+    }else{
+      const fallback = pool.find(v => !used.has(v));
+      if(!fallback) break;
+      used.add(fallback);
+      out.push(fallback);
+    }
+  }
+  return out;
+}
+function getVal(id){return document.getElementById(id).value;}
+function setVal(id,v){document.getElementById(id).value=v;}
+function isLocked(section){return !!LOCKS[section];}
+function toggleLock(section){
+  LOCKS[section]=!LOCKS[section];
+  updateLockButtons();
+}
+function updateLockButtons(){
+  Object.keys(LOCKS).forEach(section=>{
+    const btn=document.getElementById(`lock-${section}`);
+    if(!btn) return;
+    const locked=LOCKS[section];
+    btn.classList.toggle("active",locked);
+    const label=section.charAt(0).toUpperCase()+section.slice(1);
+    btn.textContent=`${locked?"🔒":"🔓"} ${label}`;
+    btn.setAttribute("aria-pressed",locked?"true":"false");
+    btn.title=locked?`${label} locked`:`${label} unlocked`;
+  });
+}
+
+function applySmartBg(){
+  if(isLocked("background")) return;
+  const map=SMART_BG[selectedCategory];
+  let bg=map.default;
+  for(const id of selectedStyles){if(map[id]){bg=map[id];break;}}
+  setVal("background-select",bg);
+}
+
+function toggleCustomColors(){
+  const v=getVal("color-palette");
+  document.getElementById("custom-color-section").style.display=(v==="Custom Brand Colors")?"block":"none";
+}
+
+function toggleHowTo(){
+  const c=document.getElementById("how-to-content");
+  const a=document.getElementById("how-arrow");
+  const open=c.style.display!=="none";
+  c.style.display=open?"none":"block";
+  a.textContent=open?"▼":"▲";
+}
+
+function resetGenderSpecificFields(group){
+  const idsByGroup={
+    male:["male-hairstyle","male-outfit","male-shoes","male-accessories"],
+    female:["female-hairstyle","female-outfit","female-shoes","female-accessories","female-lashes","female-eyebrows","female-makeup","female-nails","female-hair-gems","female-earrings"]
+  };
+  (idsByGroup[group]||[]).forEach(id=>{const el=document.getElementById(id); if(el) el.value="None";});
+}
+
+function applyGenderLock(){
+  const maleOn=selectedGender==="male";
+  const femaleOn=selectedGender==="female";
+  document.getElementById("male-options").style.display=maleOn?"block":"none";
+  document.getElementById("female-options").style.display=femaleOn?"block":"none";
+  document.getElementById("shared-char").style.display=selectedGender?"block":"none";
+  document.getElementById("no-gender-msg").style.display=selectedGender?"none":"block";
+  document.getElementById("gender-male").className="gender-btn"+(maleOn?" male-active":"");
+  document.getElementById("gender-female").className="gender-btn"+(femaleOn?" female-active":"");
+  if(maleOn) resetGenderSpecificFields("female");
+  if(femaleOn) resetGenderSpecificFields("male");
+}
+
+function toggleCharacter(){
+  const on=document.getElementById("add-character").checked;
+  document.getElementById("character-panel").style.display=on?"block":"none";
+  if(!on){
+    selectedGender=null;
+    resetGenderSpecificFields("male");
+    resetGenderSpecificFields("female");
+  }
+  applyGenderLock();
+}
+
+function setGender(g){
+  selectedGender=g;
+  applyGenderLock();
+}
+
+// ═══════════ RENDER ═══════════
+function renderCategories(){
+  const c=document.getElementById("categories");
+  c.innerHTML="";
+  Object.entries(materialStyles).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.className="cat-pill"+(selectedCategory===k?" active":"");
+    b.textContent=v.name;
+    b.onclick=()=>{
+      if(categoryNotes[selectedCategory]!==undefined)categoryNotes[selectedCategory]=getVal("custom-notes");
+      selectedCategory=k;selectedStyles.clear();
+      renderCategories();renderStyles();
+      document.getElementById("cat-label").textContent=v.name.replace(/[^a-zA-Z\s&]/g,"").trim();
+      document.getElementById("custom-notes").value=categoryNotes[k]||"";
+    };
+    c.appendChild(b);
+  });
+}
+
+function renderStyles(){
+  const g=document.getElementById("styles-grid");
+  g.innerHTML="";
+  materialStyles[selectedCategory].styles.forEach(s=>{
+    const c=document.createElement("button");
+    c.className="style-card"+(selectedStyles.has(s.id)?" active":"");
+    c.innerHTML=`<span class="se">${s.emoji}</span><span class="sn">${s.name}</span>`;
+    c.onclick=()=>{
+      if(selectedStyles.has(s.id))selectedStyles.delete(s.id);
+      else selectedStyles.add(s.id);
+      renderStyles();
+    };
+    g.appendChild(c);
+  });
+}
+
+function renderModifierChips(){
+  const d=document.getElementById("modifier-chips");
+  d.innerHTML="";
+  MODIFIER_LIST.forEach(m=>{
+    const span=document.createElement("span");
+    const isNone=m==="None";
+    span.className="mod-chip"+(isNone?" none-chip":"")+((!isNone&&selectedModifiers.has(m))?" active":"");
+    span.textContent=m;
+    span.onclick=()=>{
+      if(isNone){selectedModifiers.clear();}
+      else{if(selectedModifiers.has(m))selectedModifiers.delete(m);else selectedModifiers.add(m);}
+      renderModifierChips();
+    };
+    d.appendChild(span);
+  });
+}
+
+function renderPresets(){
+  const g=document.getElementById("presets-grid");
+  g.innerHTML="";
+  PRESETS.forEach(p=>{
+    const card=document.createElement("div");
+    card.className="preset-card";
+    card.innerHTML=`<div class="pe">${p.emoji}</div><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>`;
+    card.onclick=()=>applyPreset(p);
+    g.appendChild(card);
+  });
+}
+
+function applyPreset(p){
+  selectedCategory=p.category;
+  selectedStyles.clear();
+  p.styles.forEach(s=>selectedStyles.add(s));
+  selectedModifiers.clear();
+  p.modifiers.forEach(m=>selectedModifiers.add(m));
+  renderCategories();renderStyles();renderModifierChips();
+  document.getElementById("cat-label").textContent=materialStyles[p.category].name.replace(/[^a-zA-Z\s&]/g,"").trim();
+  setTimeout(()=>{
+    setVal("camera-angle",p.cameraAngle);
+    setVal("lens-type",p.lens);
+    setVal("light-source",p.lightSource);
+    setVal("light-direction",p.lightDir);
+    setVal("shadow-style",p.shadow);
+    setVal("atmosphere",p.atmosphere);
+    setVal("background-select",p.background);
+    setVal("color-palette",p.colorPalette);
+    setVal("animal-print",p.animalPrint);
+    toggleCustomColors();
+  },50);
+}
+
+// ═══════════ RANDOMIZE / CLEAR ═══════════
+function randomize(){
+  if(!isLocked("style")){
+    const cats=Object.keys(materialStyles);
+    selectedCategory=memoryPick("style-category",cats);
+    renderCategories();
+    const styles=materialStyles[selectedCategory].styles;
+    selectedStyles.clear();
+    const n=Math.floor(Math.random()*2)+1;
+    memoryMultiPick(`style-${selectedCategory}`,styles.map(s=>s.id),n).forEach(id=>selectedStyles.add(id));
+    renderStyles();
+    document.getElementById("cat-label").textContent=materialStyles[selectedCategory].name.replace(/[^a-zA-Z\s&]/g,"").trim();
+  }
+  if(!isLocked("camera")){
+    setVal("camera-angle",memoryPick("camera-angle",CAMERA_ANGLES,["None"]));
+    setVal("lens-type",memoryPick("lens-type",LENSES,["None"]));
+  }
+  if(!isLocked("lighting")){
+    setVal("light-source",memoryPick("light-source",LIGHT_SOURCES,["None"]));
+    setVal("light-direction",memoryPick("light-direction",LIGHT_DIRECTIONS,["None"]));
+    setVal("shadow-style",memoryPick("shadow-style",SHADOW_STYLES,["None"]));
+    setVal("atmosphere",memoryPick("atmosphere",ATMOSPHERES,["None"]));
+  }
+  if(!isLocked("background")){
+    setVal("background-select",memoryPick("background-select",BACKGROUNDS,["None"]));
+    setVal("color-palette",memoryPick("color-palette",COLOR_PALETTES_LIST,["None","Custom Brand Colors"]));
+    setVal("animal-print",memoryPick("animal-print",ANIMAL_PRINTS_LIST,["None"]));
+  }
+  if(!isLocked("modifiers")){
+    const allMods=MODIFIER_LIST.filter(x=>x!=="None");
+    selectedModifiers.clear();
+    const nm=Math.floor(Math.random()*3)+1;
+    memoryMultiPick("modifiers",allMods,nm).forEach(m=>selectedModifiers.add(m));
+    renderModifierChips();
+  }
+  if(!isLocked("classic")){
+    resetMergeControls();
+    if(Math.random()>.38) setVal("merge-object-font", memoryPick("merge-object-font",MERGE_OBJECT_FONT,["None"]));
+    if(Math.random()>.5) setVal("merge-construction", memoryPick("merge-construction",MERGE_CONSTRUCTION,["None"]));
+    if(Math.random()>.45) setVal("merge-realism", memoryPick("merge-realism",MERGE_REALISM,["None"]));
+    if(Math.random()>.45) setVal("merge-finish", memoryPick("merge-finish",MERGE_FINISH,["None"]));
+    if(Math.random()>.55) setVal("merge-thickness", memoryPick("merge-thickness",MERGE_THICKNESS,["None"]));
+    if(Math.random()>.6) setVal("merge-edge", memoryPick("merge-edge",MERGE_EDGE,["None"]));
+    if(Math.random()>.62) setVal("merge-shadow", memoryPick("merge-shadow",MERGE_SHADOW,["None"]));
+    if(Math.random()>.72) setVal("merge-drips", memoryPick("merge-drips",MERGE_DRIPS,["Off"]));
+    if(Math.random()>.65) setVal("merge-primary", memoryPick("merge-primary",MERGE_COLOR_CHOICES,["None"]));
+    if(Math.random()>.7) setVal("merge-secondary", memoryPick("merge-secondary",MERGE_COLOR_CHOICES,["None"]));
+    if(Math.random()>.72) setVal("merge-accent", memoryPick("merge-accent",MERGE_COLOR_CHOICES,["None"]));
+    if(Math.random()>.68) setVal("merge-decor", memoryPick("merge-decor",MERGE_DECOR,["None"]));
+    if(Math.random()>.62) setVal("merge-mood", memoryPick("merge-mood",MERGE_MOOD,["None"]));
+  }
+  toggleCustomColors();
+}
+
+function clearAll(){
+  selectedStyles.clear();selectedModifiers.clear();selectedGender=null;
+  renderStyles();renderModifierChips();
+  document.getElementById("user-text").value="";
+  document.getElementById("custom-notes").value="";
+  Object.keys(categoryNotes).forEach(k=>categoryNotes[k]="");
+  ["camera-angle","lens-type","light-source","light-direction","shadow-style","atmosphere","background-select","color-palette","animal-print"].forEach(id=>setVal(id,"None"));
+  resetMergeControls();
+  ["cc1","cc2","cc3","cc4"].forEach((id,i)=>{document.getElementById(id).value=""; const picker=document.getElementById("cp"+(i+1)); if(picker){picker.value=["#FF6B9D","#C44569","#FFD700","#FFFFFF"][i];}});
+  document.getElementById("add-character").checked=false;
+  resetGenderSpecificFields("male");
+  resetGenderSpecificFields("female");
+  toggleCharacter();
+  currentMarketingSections=null;
+  const marketingWrap=document.getElementById("marketing-sections");
+  if(marketingWrap){marketingWrap.style.display="none";marketingWrap.innerHTML="";}
+  document.getElementById("output-section").style.display="none";
+  renderVariations([]);
+  toggleCustomColors();
+}
+
+// ═══════════ GENERATE ═══════════
+function getStyleParts(){
+  if(selectedStyles.size===0){
+    const s=materialStyles[selectedCategory].styles;
+    const rand=s[Math.floor(Math.random()*s.length)];
+    selectedStyles.add(rand.id);renderStyles();
+    return [rand.keywords];
+  }
+  return [...selectedStyles].map(id=>{
+    const found=materialStyles[selectedCategory].styles.find(s=>s.id===id);
+    return found?found.keywords:id;
+  });
+}
+
+function captureState(){
+  return {
+    selectedCategory,
+    selectedStyles:[...selectedStyles],
+    selectedModifiers:[...selectedModifiers],
+    selectedGender,
+    addCharacter:document.getElementById("add-character").checked,
+    customNotes:document.getElementById("custom-notes").value,
+    userText:document.getElementById("user-text").value,
+    values:{
+      cameraAngle:getVal("camera-angle"),lensType:getVal("lens-type"),lightSource:getVal("light-source"),lightDirection:getVal("light-direction"),shadowStyle:getVal("shadow-style"),atmosphere:getVal("atmosphere"),background:getVal("background-select"),colorPalette:getVal("color-palette"),animalPrint:getVal("animal-print"),
+      mergeObjectFont:getVal("merge-object-font"),mergeConstruction:getVal("merge-construction"),mergeRealism:getVal("merge-realism"),mergeFinish:getVal("merge-finish"),mergeThickness:getVal("merge-thickness"),mergeEdge:getVal("merge-edge"),mergeShadow:getVal("merge-shadow"),mergeDrips:getVal("merge-drips"),mergePrimary:getVal("merge-primary"),mergeSecondary:getVal("merge-secondary"),mergeAccent:getVal("merge-accent"),mergeDecor:getVal("merge-decor"),mergeMood:getVal("merge-mood"),
+      maleHairstyle:getVal("male-hairstyle"),maleOutfit:getVal("male-outfit"),maleShoes:getVal("male-shoes"),maleAccessories:getVal("male-accessories"),femaleHairstyle:getVal("female-hairstyle"),femaleOutfit:getVal("female-outfit"),femaleShoes:getVal("female-shoes"),femaleAccessories:getVal("female-accessories"),femaleLashes:getVal("female-lashes"),femaleEyebrows:getVal("female-eyebrows"),femaleMakeup:getVal("female-makeup"),femaleNails:getVal("female-nails"),femaleHairGems:getVal("female-hair-gems"),femaleEarrings:getVal("female-earrings"),skinTone:getVal("skin-tone"),expression:getVal("expression"),poseStyle:getVal("pose-style"),
+      cc1:getVal("cc1"),cc2:getVal("cc2"),cc3:getVal("cc3"),cc4:getVal("cc4")
+    }
+  };
+}
+
+function applyState(state){
+  selectedCategory=state.selectedCategory;
+  selectedStyles=new Set(state.selectedStyles);
+  selectedModifiers=new Set(state.selectedModifiers);
+  selectedGender=state.selectedGender;
+  document.getElementById("user-text").value=state.userText;
+  document.getElementById("custom-notes").value=state.customNotes;
+  document.getElementById("add-character").checked=state.addCharacter;
+  renderCategories();renderStyles();renderModifierChips();
+  Object.entries(state.values).forEach(([k,v])=>{
+    const idMap={cameraAngle:"camera-angle",lensType:"lens-type",lightSource:"light-source",lightDirection:"light-direction",shadowStyle:"shadow-style",atmosphere:"atmosphere",background:"background-select",colorPalette:"color-palette",animalPrint:"animal-print",mergeObjectFont:"merge-object-font",mergeConstruction:"merge-construction",mergeRealism:"merge-realism",mergeFinish:"merge-finish",mergeThickness:"merge-thickness",mergeEdge:"merge-edge",mergeShadow:"merge-shadow",mergeDrips:"merge-drips",mergePrimary:"merge-primary",mergeSecondary:"merge-secondary",mergeAccent:"merge-accent",mergeDecor:"merge-decor",mergeMood:"merge-mood",maleHairstyle:"male-hairstyle",maleOutfit:"male-outfit",maleShoes:"male-shoes",maleAccessories:"male-accessories",femaleHairstyle:"female-hairstyle",femaleOutfit:"female-outfit",femaleShoes:"female-shoes",femaleAccessories:"female-accessories",femaleLashes:"female-lashes",femaleEyebrows:"female-eyebrows",femaleMakeup:"female-makeup",femaleNails:"female-nails",femaleHairGems:"female-hair-gems",femaleEarrings:"female-earrings",skinTone:"skin-tone",expression:"expression",poseStyle:"pose-style",cc1:"cc1",cc2:"cc2",cc3:"cc3",cc4:"cc4"};
+    const id=idMap[k]; if(id) setVal(id,v);
+  });
+  toggleCharacter();
+  if(state.addCharacter && state.selectedGender) setGender(state.selectedGender);
+  toggleCustomColors();
+}
+
+function mutateVariation(index){
+  if(!isLocked("camera")){
+    setVal("camera-angle",pickNonNone(CAMERA_ANGLES));
+    setVal("lens-type",pickNonNone(LENSES));
+  }
+  if(!isLocked("lighting")){
+    setVal("light-source",pickNonNone(LIGHT_SOURCES));
+    setVal("light-direction",pickNonNone(LIGHT_DIRECTIONS));
+    setVal("shadow-style",pickNonNone(SHADOW_STYLES));
+    setVal("atmosphere",pickNonNone(ATMOSPHERES));
+  }
+  if(!isLocked("background")){
+    setVal("background-select",pickNonNone(BACKGROUNDS));
+    setVal("color-palette",pick(COLOR_PALETTES_LIST.filter(x=>x!=="None"&&x!=="Custom Brand Colors")));
+    if(Math.random()>.45) setVal("animal-print",pick(ANIMAL_PRINTS_LIST));
+  }
+  if(!isLocked("modifiers")){
+    const allMods=MODIFIER_LIST.filter(x=>x!=="None");
+    selectedModifiers.clear();
+    [...allMods].sort(()=>Math.random()-.5).slice(0,Math.floor(Math.random()*3)+1).forEach(m=>selectedModifiers.add(m));
+    renderModifierChips();
+  }
+  if(!isLocked("classic")){
+    if(Math.random()>.45) setVal("merge-finish",pickNonNone(MERGE_FINISH));
+    if(Math.random()>.5) setVal("merge-shadow",pickNonNone(MERGE_SHADOW));
+    if(Math.random()>.58) setVal("merge-drips",pick(MERGE_DRIPS.filter(x=>x!=="Off")));
+    if(Math.random()>.4) setVal("merge-primary",pickNonNone(MERGE_COLOR_CHOICES));
+    if(Math.random()>.55) setVal("merge-secondary",pickNonNone(MERGE_COLOR_CHOICES));
+    if(Math.random()>.62) setVal("merge-accent",pickNonNone(MERGE_COLOR_CHOICES));
+    if(Math.random()>.6) setVal("merge-decor",pickNonNone(MERGE_DECOR));
+    if(Math.random()>.52) setVal("merge-mood",pickNonNone(MERGE_MOOD));
+  }
+  toggleCustomColors();
+}
+
+function renderVariations(items){
+  const wrap=document.getElementById("variations-wrap");
+  const grid=document.getElementById("variation-grid");
+  if(!items || !items.length){wrap.style.display="none";grid.innerHTML="";return;}
+  grid.innerHTML=items.map((item,idx)=>`<div class="variation-card"><div class="variation-head"><div class="variation-name">Variation ${idx+1}</div><button class="variation-copy" data-variation-copy="${idx}" onclick="copyVariation(${idx})">COPY</button></div><div class="variation-text">${escapeHtml(item)}</div></div>`).join("");
+  wrap.style.display="block";
+  window.currentVariations=items;
+}
+
+function copyVariation(index){
+  const txt=(window.currentVariations||[])[index];
+  if(!txt) return;
+  const ta=document.createElement("textarea");ta.value=txt;ta.style.cssText="position:fixed;left:-9999px;";document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand("copy");}catch(e){}
+  document.body.removeChild(ta);
+  const btn=document.querySelector(`[data-variation-copy="${index}"]`);
+  if(btn){
+    const prev=btn.textContent;
+    btn.textContent="COPIED";
+    setTimeout(()=>{btn.textContent=prev;},1400);
+  }
+}
+
+function generateVariations(){
+  if(lastGeneratedType!=="photo"){
+    document.getElementById("variation-icon").textContent="⚠️";
+    document.getElementById("variation-text").textContent="PHOTO ONLY";
+    setTimeout(()=>{document.getElementById("variation-icon").textContent="🪄";document.getElementById("variation-text").textContent="3 MORE VARIATIONS";},1800);
+    return;
+  }
+  categoryNotes[selectedCategory]=document.getElementById("custom-notes").value.trim();
+  const base=captureState();
+  const vars=[];
+  for(let i=0;i<3;i++){
+    applyState(base);
+    mutateVariation(i);
+    vars.push(buildPhotoPrompt());
+  }
+  applyState(base);
+  renderVariations(vars);
+  document.getElementById("variation-icon").textContent="✅";
+  document.getElementById("variation-text").textContent="VARIATIONS READY";
+  setTimeout(()=>{document.getElementById("variation-icon").textContent="🪄";document.getElementById("variation-text").textContent="3 MORE VARIATIONS";},2200);
+}
+
+function buildSunoPack(){
+  const text=document.getElementById("user-text").value.trim()||(pick(TEXT_SUGGESTIONS));
+  const merge=getMergeData();
+  const clean=getCleanSelections();
+  const effectiveAtmosphere=clean.atmosphere||merge.mood||"Glamorous High Luxury";
+  const moodKey=MUSIC_MOODS[effectiveAtmosphere]?effectiveAtmosphere:"default";
+  const music=MUSIC_MOODS[moodKey]||MUSIC_MOODS["default"];
+  const styleIds=[...selectedStyles];
+  if(styleIds.length===0){const s=materialStyles[selectedCategory].styles;const rand=pick(s);selectedStyles.add(rand.id);renderStyles();styleIds.push(rand.id);}
+  const styleNames=styleIds.map(id=>{const f=materialStyles[selectedCategory].styles.find(s=>s.id===id);return f?f.name:id;});
+  const palette=clean.colorPalette==="Custom Brand Colors"?[getVal("cc1"),getVal("cc2"),getVal("cc3"),getVal("cc4")].filter(Boolean).join(", "):(CP[clean.colorPalette]||merge.primary||"luxury mixed tones");
+  const decor=[merge.decor, clean.animalPrint!=="None"?clean.animalPrint:"", merge.finish].filter(Boolean).join(", ");
+  const themeLine=`Theme: ${text} | ${styleNames.join(" + ")} | ${effectiveAtmosphere}`;
+  const visualLine=`Visual cues: ${palette}${decor?" | accents: "+decor:""}`;
+  const hook=`Hook phrase: ${text}, ${effectiveAtmosphere.toLowerCase()}, make it catchy and memorable.`;
+
+  const jingle=`Prompt: Create a short branded jingle for "${text}" with a ${effectiveAtmosphere.toLowerCase()} vibe. Make it punchy, instantly catchy, and easy to repeat.
+Lyrics:
+${text}, ${text}, say it loud tonight
+Shine so bold, yeah we do it right
+Glow up, show up, own the spotlight
+${text}, ${text}, we came to shine`;
+
+  const song30=`Prompt: Create a 30-second song for "${text}" with a ${effectiveAtmosphere.toLowerCase()} feel. Keep it hook-heavy, clear, and social-media friendly.
+Lyrics:
+Verse: Walking in with that ${effectiveAtmosphere.toLowerCase()} energy, every little detail looking like a luxury fantasy.
+Pre-hook: Turn it up, light it up, let the whole room know.
+Hook: ${text}, ${text}, glowing with the vibe, bold in the moment, feeling so alive. ${text}, ${text}, shine in every frame, step into the scene and remember the name.`;
+
+  const song60=`Prompt: Create a 1-minute anthem for "${text}" inspired by ${styleNames.join(", ")}. Keep the production ${effectiveAtmosphere.toLowerCase()}, memorable, and cinematic enough for promos, reels, and branding.
+Lyrics:
+Verse 1: Built from vision, built from fire, dressed in color and desire. Every move electric, every second picture-perfect.
+Pre-hook: Feel the rush, hear the crowd, this is how we say it loud.
+Hook: ${text}, ${text}, put the whole world on notice, shining too hard for them not to focus. ${text}, ${text}, built to be iconic, bold and bright and fully hypnotic.
+Verse 2: Gold in the details, power in the style, turning one good moment into something worth awhile.
+Bridge: Raise it up, don’t dim the light, we were made to own the night.
+Hook: ${text}, ${text}, put the whole world on notice, shining too hard for them not to focus.`;
+
+  currentSunoSections={
+    jingle:jingle,
+    song30:song30,
+    song60:song60
+  };
+
+  return `🎵 SUNO PACK — "${text}"
+${"━".repeat(44)}
+
+✦ SOUND DIRECTION
+${music}
+${themeLine}
+${visualLine}
+
+✦ JINGLE (8–12 seconds)
+${jingle}
+
+✦ 30-SECOND SONG
+${song30}
+
+✦ 1-MINUTE SONG
+${song60}
+
+✦ SUNO SETTINGS IDEA
+Weirdness: 18–28%
+Style Influence: 50–65%
+Audio Influence: 20–35%
+
+✦ QUICK NOTES
+${hook}
+Keep lyrics clean, memorable, and easy to sing.`;
+}
+
+function buildPhotoPrompt(){
+  const text=document.getElementById("user-text").value.trim()||(pick(TEXT_SUGGESTIONS));
+  const merge=getMergeData();
+  const styleDesc=buildCoreMaterialDescription();
+  const realismTag=getRenderStyleTag(merge.realism);
+  let p=`3D text "${text}" crafted from ${styleDesc}, 3D typography render, `;
+  const clean=getCleanSelections();
+  const angle=clean.angle,lens=clean.lens,ls=clean.lightSource,ld=clean.lightDirection,shad=clean.shadowStyle,bg=clean.background,pal=clean.colorPalette,ap=clean.animalPrint;
+  const effectiveAtmosphere=clean.atmosphere;
+  if(angle!=="None")p+=`${angle} camera angle, `;
+  if(lens!=="None")p+=`${lens} lens, `;
+  if(ls!=="None")p+=`${ls} lighting `;
+  if(ld!=="None")p+=`from ${ld}, `;
+  if(shad!=="None")p+=`${shad} shadows, `;
+  if(effectiveAtmosphere) p+=`${effectiveAtmosphere} atmosphere, `;
+  if(bg!=="None")p+=`${bg} background, `;
+  if(pal==="Custom Brand Colors"){
+    const cols=[getVal("cc1"),getVal("cc2"),getVal("cc3"),getVal("cc4")].filter(Boolean);
+    if(cols.length)p+=`custom brand palette: ${cols.join(", ")}, `;
+  } else if(pal!=="None"&&CP[pal]) p+=`${CP[pal]}, `;
+  if(ap!=="None"&&AP[ap])p+=`${AP[ap]} accent, `;
+  if(document.getElementById("add-character").checked&&selectedGender){
+    const face=pick(UNIQUE_FACES),styling=pick(UNIQUE_STYLING);
+    const skin=getVal("skin-tone"),expr=getVal("expression"),pose=getVal("pose-style");
+    let char=`featuring a ${expr!=="None"?expr.toLowerCase()+" ":""}${skin!=="None"?skin.toLowerCase()+" skin ":""}${selectedGender} character, ${face}, ${styling}, `;
+    if(selectedGender==="male"){
+      const hair=getVal("male-hairstyle"),outfit=getVal("male-outfit"),shoes=getVal("male-shoes"),acc=getVal("male-accessories");
+      if(hair!=="None")char+=`${hair} hair, `;
+      if(outfit!=="None")char+=`wearing ${outfit}, `;
+      if(shoes!=="None")char+=`${shoes}, `;
+      if(acc!=="None")char+=`accessorized with ${acc}, `;
+    } else {
+      const hair=getVal("female-hairstyle"),outfit=getVal("female-outfit"),shoes=getVal("female-shoes"),acc=getVal("female-accessories"),lashes=getVal("female-lashes"),brows=getVal("female-eyebrows"),makeup=getVal("female-makeup"),nails=getVal("female-nails"),hairGems=getVal("female-hair-gems"),earrings=getVal("female-earrings");
+      if(hair!=="None")char+=`${hair} hair, `;
+      if(outfit!=="None")char+=`wearing ${outfit}, `;
+      if(shoes!=="None")char+=`${shoes}, `;
+      if(acc!=="None")char+=`accessorized with ${acc}, `;
+      if(lashes!=="None")char+=`${lashes} lashes, `;
+      if(brows!=="None")char+=`${brows} eyebrows, `;
+      if(makeup!=="None")char+=`${makeup} makeup, `;
+      if(nails!=="None")char+=`${nails}, `;
+      if(hairGems!=="None")char+=`${hairGems}, `;
+      if(earrings!=="None")char+=`${earrings}, `;
+    }
+    if(pose!=="None")char+=`${pose} pose, `;
+    p+=char;
+  }
+  if(selectedModifiers.size>0){const mods=[...selectedModifiers].map(m=>MP[m]||m).join(", ");p+=`${mods}, `;}
+  const mergeLines=buildMergeLines();
+  if(mergeLines.length)p+=`${mergeLines.join(", ")}, `;
+  const notes=document.getElementById("custom-notes").value.trim();
+  if(notes)p+=`${notes}, `;
+  p+=`8K ultra-detailed, professional photography quality, sharp focus, ${realismTag}, --ar 1:1`;
+  return p;
+}
+
+function buildVideoScript(){
+  const text=document.getElementById("user-text").value.trim()||(pick(TEXT_SUGGESTIONS));
+  const styleIds=[...selectedStyles];
+  if(styleIds.length===0){const s=materialStyles[selectedCategory].styles;const rand=pick(s);selectedStyles.add(rand.id);renderStyles();styleIds.push(rand.id);}
+  const styleNames=styleIds.map(id=>{const f=materialStyles[selectedCategory].styles.find(s=>s.id===id);return f?f.name:id;});
+  const clean=getCleanSelections();
+  const angle=clean.angle,lens=clean.lens,ls=clean.lightSource,ld=clean.lightDirection,shad=clean.shadowStyle,bg=clean.background,pal=clean.colorPalette,ap=clean.animalPrint;
+  const effectiveAtmosphere=clean.atmosphere;
+  const moodKey=effectiveAtmosphere||"default";
+  const music=MUSIC_MOODS[moodKey]||MUSIC_MOODS["default"];
+  let charSection="";
+  if(document.getElementById("add-character").checked&&selectedGender){
+    const face=pick(UNIQUE_FACES),styling=pick(UNIQUE_STYLING);
+    const skin=getVal("skin-tone"),expr=getVal("expression"),pose=getVal("pose-style");
+    charSection=`Featuring: ${expr!=="None"?expr+" ":""}${skin!=="None"?skin+" ":""}${selectedGender} — ${face}, ${styling}${pose!=="None"?", "+pose+" pose":""}`;
+  }
+  const line="─".repeat(44);
+  let script=`🎬 VIDEO SCRIPT — "${text}"\n`;
+  script+=`${"━".repeat(44)}\n\n`;
+  script+=`✦ CONCEPT\n`;
+  script+=`Style: ${styleNames.join(" + ")} typography\n`;
+  script+=`Vibe: ${effectiveAtmosphere||"Cinematic luxury"}\n`;
+  script+=`Platform: TikTok / Instagram Reels / YouTube Shorts\n\n`;
+  script+=`${line}\n`;
+  script+=`✦ SCENE SETUP\n`;
+  script+=`Subject: 3D "${text}" typography | ${styleNames.join(", ")} material\n`;
+  script+=`Background: ${bg!=="None"?bg:"Dramatic studio"}\n`;
+  script+=`Mood: ${effectiveAtmosphere||"Glamorous"}\n`;
+  script+=`Lighting: ${ls!=="None"?ls:"Studio"} from ${ld!=="None"?ld:"overhead"}\n`;
+  script+=`Shadow: ${shad!=="None"?shad:"Natural"}\n`;
+  if(pal!=="None"&&pal!=="Custom Brand Colors"&&CP[pal])script+=`Color Story: ${CP[pal]}\n`;
+  if(ap!=="None"&&AP[ap])script+=`Pattern Accent: ${AP[ap]}\n`;
+  const mergeLines=buildMergeLines();
+  if(mergeLines.length)script+=`Classic Builder: ${mergeLines.join(" | ")}\n`;
+  if(charSection)script+=`${charSection}\n`;
+  script+=`\n${line}\n`;
+  script+=`✦ SHOT 1 | OPENING (0:00–0:03)\n`;
+  script+=`Camera: ${angle!=="None"?angle:"Eye level"} | ${lens!=="None"?lens:"Standard"} lens\n`;
+  script+=`Action: Open on ${bg!=="None"?bg:"background"}. Establish the ${effectiveAtmosphere?effectiveAtmosphere.toLowerCase()+" ":""}atmosphere.\n`;
+  script+=`Sound: Music fades in. Ambient texture fills the space.\n\n`;
+  script+=`✦ SHOT 2 | REVEAL (0:03–0:08)\n`;
+  script+=`Camera: Slow push-in toward subject\n`;
+  script+=`Action: "${text}" emerges letter by letter with ${styleNames[0]} texture effect.\n`;
+  script+=`Lighting: ${ls!=="None"?ls:"Key light"} intensifies. ${shad!=="None"?shad+" shadows deepen.":""}\n`;
+  script+=`Effect: Each letter materializes with distinct ${styleNames.join("/")} surface.\n\n`;
+  script+=`✦ SHOT 3 | MAIN HOLD (0:08–0:15)\n`;
+  script+=`Camera: Static ${angle!=="None"?angle:"eye level"} OR slow 360° orbit\n`;
+  script+=`Action: Full composition displayed. Background elements animate subtly.\n`;
+  if(pal!=="None"&&CP[pal])script+=`Color Grade: ${CP[pal]} treatment applied.\n`;
+  if(charSection)script+=`Character interacts naturally with the typography element.\n`;
+  script+=`\n✦ SHOT 4 | OUTRO (0:15–0:20)\n`;
+  script+=`Camera: Slow pull-back to wide\n`;
+  script+=`Action: Typography glows or pulses gently. Brand element reveals.\n`;
+  script+=`Transition: Cinematic fade to black / Quick cut / Glitch flash\n\n`;
+  script+=`${line}\n`;
+  script+=`✦ TEXT OVERLAY\n`;
+  script+=`Main Text: "${text}"\n`;
+  script+=`Font Style: Cinzel Decorative / Luxury Script\n`;
+  script+=`CTA: "Save this ✨" | "Try it now 💎" | "Tag someone 👑"\n\n`;
+  script+=`✦ MUSIC MOOD\n`;
+  script+=`${music}\n\n`;
+  script+=`${line}\n`;
+  script+=`✦ TECH SPECS\n`;
+  script+=`AI Video Tool: RunwayML Gen-4 / Kling / Pika Labs / Sora\n`;
+  script+=`Aspect Ratio: 9:16 (Reels/TikTok) | 16:9 (YouTube)\n`;
+  script+=`Resolution: 1080p minimum | 4K preferred\n`;
+  script+=`Frame Rate: 24fps cinematic | 30fps standard\n`;
+  script+=`Duration: 15–30 seconds recommended`;
+  return script;
+}
+
+
+function getPrimaryStyleNames(){
+  const styleIds=[...selectedStyles];
+  if(styleIds.length===0){
+    const s=materialStyles[selectedCategory].styles;
+    const rand=pick(s);
+    selectedStyles.add(rand.id);
+    renderStyles();
+    styleIds.push(rand.id);
+  }
+  return styleIds.map(id=>{
+    const f=materialStyles[selectedCategory].styles.find(s=>s.id===id);
+    return f?f.name:id;
+  });
+}
+
+function buildMarketingPack(){
+  const text=document.getElementById("user-text").value.trim()||(pick(TEXT_SUGGESTIONS));
+  const clean=getCleanSelections();
+  const styles=getPrimaryStyleNames();
+  const vibe=clean.atmosphere && clean.atmosphere!=="None" ? clean.atmosphere : "Glamorous High Luxury";
+  const bg=clean.background && clean.background!=="None" ? clean.background : "clean luxury studio";
+  const palette=clean.colorPalette==="Custom Brand Colors"
+    ? [getVal("cc1"),getVal("cc2"),getVal("cc3"),getVal("cc4")].filter(Boolean).join(", ")
+    : (CP[clean.colorPalette] || "bold luxury tones");
+  const styleLine=styles.join(", ");
+  const pageSlug=text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || "glam-3d-typography";
+  const benefitLine=`scroll-stopping 3D typography for creators who want premium, polished visuals fast`;
+  const offerLine=`Use "${text}" to create bold text art, promo visuals, covers, thumbnails, branding graphics, and launch content.`;
+
+  const caption1=`${text} but make it expensive. ✨ Turn plain words into polished 3D typography that actually stops the scroll. Perfect for covers, promos, thumbnails, and digital products. Tap the link and create your next bold visual fast.`;
+  const caption2=`If your text still looks flat, basic, or forgettable... this is your fix. "${text}" can become glossy, luxe, dramatic, playful, or bold in seconds. Create faster. Look more premium. Sell with more confidence.`;
+  const caption3=`One word. One idea. Endless glam possibilities. Use this generator to turn "${text}" into eye-catching 3D typography for launches, mockups, social posts, and product covers.`;
+
+  const hashtags=`#Glam3DTypography #PromptGenerator #AICreatorTools #DigitalProducts #ContentCreatorTools #AIDesign #CreatorBusiness #BrandingDesign #EtsySellerTools #PrintOnDemandDesign #SocialMediaGraphics #ThumbnailDesign #LaunchContent #PromptEngineering #WomenInBusiness`;
+
+  const seo=`SEO TITLE:
+${text} 3D Typography Generator for Scroll-Stopping Digital Content
+
+SEO META DESCRIPTION:
+Create premium 3D typography for digital products, social media graphics, thumbnails, merch, branding, and launch content with the Glam-3D Typography Generator.
+
+SEO KEYWORDS:
+${text} typography, 3D typography generator, AI text design, glam text prompt, digital product cover design, social media text graphics, premium typography generator, creator marketing toolkit
+
+SEO SLUG:
+${pageSlug}`;
+
+  const ctas=`• Get instant access now
+• Turn your words into premium 3D visuals
+• Create your next promo graphic in minutes
+• Use one idea to build a full content workflow
+• Grab the generator and start creating today
+• Make your brand look more polished fast`;
+
+  const email=`SUBJECT LINE OPTIONS:
+• Your next scroll-stopping design starts here
+• Turn plain text into premium 3D content
+• This generator makes your words sell harder
+
+EMAIL BODY:
+Need your content to look more polished without spending hours designing? The Glam-3D Typography Generator helps you turn plain words into bold, premium-looking 3D text for covers, promos, social posts, thumbnails, and digital products. Use it to create visuals faster, market smarter, and make your brand feel more elevated. Click below to get instant access and start building content that looks expensive and intentional.
+
+CTA BUTTON:
+Get the Generator`;
+
+  const pinterest=`PINTEREST TITLE:
+${text} 3D Typography Ideas for Digital Products and Social Media
+
+PINTEREST DESCRIPTION:
+Create bold, polished 3D typography for product covers, TikTok graphics, YouTube thumbnails, promos, and branding using one glam prompt generator. Perfect for creators, Etsy sellers, and digital product businesses.
+
+PIN TEXT HOOKS:
+• Make your words look expensive
+• Turn text into scroll-stopping graphics
+• Premium 3D typography in minutes`;
+
+  const tiktok=`TIKTOK HOOKS:
+• Stop using boring text on your graphics
+• If your words don't hit, this fixes that
+• Watch me turn one word into premium content
+
+TIKTOK CTA:
+Comment "GLAM" and grab the generator from the link in bio.
+
+TIKTOK VIDEO ANGLE:
+Show the plain word first, then reveal the glossy 3D result, then flash the generator dashboard and direct viewers to your page.`;
+
+  const facebook=`FACEBOOK POST:
+If your graphics still feel flat, the Glam-3D Typography Generator can help. It turns plain words into polished 3D text for covers, promos, social posts, thumbnails, and digital products. It's beginner-friendly, fast, and built to help creators make their content feel more premium without needing complicated software. Click through and see what you can build with one idea.`;
+
+  const instagram=`INSTAGRAM CAPTION:
+${caption1}
+
+Save this for your next launch, promo post, or digital product cover. This generator helps you build polished visuals, matching content ideas, and a stronger brand look from one dashboard.
+
+CTA:
+Tap the link in bio to try it.`;
+
+  const youtube=`YOUTUBE TITLE OPTIONS:
+• Turn Plain Words Into Luxury 3D Typography
+• This AI Generator Makes Your Text Look Expensive
+• How I Create Scroll-Stopping 3D Text for Digital Products
+
+YOUTUBE DESCRIPTION:
+In this video, I’m showing how to use the Glam-3D Typography Generator to turn simple words into polished 3D text designs for digital products, social media posts, thumbnails, launch graphics, and branding. This is perfect for content creators, digital sellers, and anyone who wants their visuals to look more premium.
+
+YOUTUBE CTA:
+Check the link below to get the generator and start creating your own glam text graphics.`;
+
+  const adcopy=`AD HEADLINE OPTIONS:
+• Make your words look expensive
+• Plain text is cancelled
+• Turn one word into premium content
+
+PRIMARY AD COPY:
+Turn plain words into bold, polished, scroll-stopping 3D typography for covers, promos, thumbnails, digital products, merch, and branding. The Glam-3D Typography Generator helps you create high-impact visuals faster, with a more premium look and less creative overwhelm.
+
+SHORT AD COPY:
+Create premium 3D text fast. Covers, promos, thumbnails, branding, and more — all from one glam generator.
+
+CTA:
+Shop now | Get instant access | Start creating`;
+
+  const strategy=`MARKETING ANGLE:
+Lead with the transformation: plain text → premium 3D content.
+
+CORE SELLING POINTS:
+• Saves time
+• Makes content look more polished
+• Helps creators market visually
+• Beginner-friendly but still powerful
+• Great for digital products, promos, launches, and social media
+
+BEST USE CASES TO SELL:
+${offerLine}
+
+BEST PLATFORMS:
+ChatGPT, Gemini, and Bing for prompt use
+Wisk, RunwayML, Kling, and Pika for creative video workflows`;
+
+  currentMarketingSections={
+    captions:`CAPTION OPTIONS:\n1. ${caption1}\n\n2. ${caption2}\n\n3. ${caption3}`,
+    hashtags:hashtags,
+    seo:seo,
+    ctas:ctas,
+    email:email,
+    pinterest:pinterest,
+    tiktok:tiktok,
+    facebook:facebook,
+    instagram:instagram,
+    youtube:youtube,
+    adcopy:adcopy,
+    strategy:strategy
+  };
+
+  return `📣 MARKETING EXECUTIVE PACK — "${text}"
+${"━".repeat(44)}
+
+STYLE:
+${styleLine}
+
+VIBE:
+${vibe}
+
+BACKGROUND:
+${bg}
+
+COLOR STORY:
+${palette}
+
+POSITIONING:
+${benefitLine}
+
+MARKETING GOAL:
+Drive clicks, save-worthy engagement, product interest, and sales with polished visuals and matching promotional copy.`;
+}
+
+
+function addToHistory(type,content){
+  const item={id:Date.now(),type,content,createdAt:new Date().toLocaleString()};
+  promptHistory.unshift(item);
+  promptHistory=promptHistory.slice(0,10);
+  renderHistory();
+}
+
+function renderHistory(){
+  const list=document.getElementById("history-list");
+  if(!list)return;
+  if(!promptHistory.length){
+    list.innerHTML='<div class="history-empty">No saved prompts yet. Generate something good and it will show up here.</div>';
+    return;
+  }
+  list.innerHTML=promptHistory.map(item=>`<div class="history-item"><div class="history-meta"><div><div class="history-kind">${item.type==="photo"?"📸 Photo Prompt":item.type==="video"?"🎬 Video Script":"🎵 Suno Pack"}</div><div class="history-time">${item.createdAt}</div></div><button class="history-btn" onclick="reuseHistory(${item.id})">USE AGAIN</button></div><div class="history-preview">${escapeHtml(item.content)}</div></div>`).join("");
+}
+
+function escapeHtml(str){
+  return str.replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+}
+
+function reuseHistory(id){
+  const item=promptHistory.find(x=>x.id===id);
+  if(!item)return;
+  lastGeneratedType=item.type;
+  document.getElementById("prompt-output").textContent=item.content;
+  document.getElementById("output-type-label").textContent=item.type==="photo"?"📸 Photo Prompt":item.type==="video"?"🎬 Video Script":"🎵 Suno Pack";
+  renderSunoSections();
+  renderVideoSections();
+  renderMarketingSections();
+  renderVariations([]);
+  document.getElementById("output-section").style.display="block";
+  setTimeout(()=>document.getElementById("output-section").scrollIntoView({behavior:"smooth",block:"nearest"}),100);
+}
+
+function toggleHistory(){
+  historyOpen=!historyOpen;
+  document.getElementById("history-content").style.display=historyOpen?"block":"none";
+  document.getElementById("history-arrow").textContent=historyOpen?"▲":"▼";
+}
+
+function renderSunoSections(){
+  const wrap=document.getElementById("suno-sections");
+  if(!wrap) return;
+  if(lastGeneratedType!=="suno" || !currentSunoSections){
+    wrap.style.display="none";
+    wrap.innerHTML="";
+    return;
+  }
+  wrap.innerHTML=`<div class="suno-section-card"><div class="suno-section-head"><div class="suno-section-name">🎵 Jingle</div><div class="section-action-row"><button class="suno-copy section-action" type="button" data-suno-copy="jingle" onclick="copySunoSection('jingle')">COPY JINGLE</button><button class="suno-save section-save" type="button" data-suno-save="jingle" onclick="saveSunoSection('jingle')">SAVE JINGLE</button></div></div><div class="suno-section-text">${escapeHtml(currentSunoSections.jingle)}</div></div>
+  <div class="suno-section-card"><div class="suno-section-head"><div class="suno-section-name">🎶 30-Second Song</div><div class="section-action-row"><button class="suno-copy section-action" type="button" data-suno-copy="song30" onclick="copySunoSection('song30')">COPY 30-SEC</button><button class="suno-save section-save" type="button" data-suno-save="song30" onclick="saveSunoSection('song30')">SAVE 30-SEC</button></div></div><div class="suno-section-text">${escapeHtml(currentSunoSections.song30)}</div></div>
+  <div class="suno-section-card"><div class="suno-section-head"><div class="suno-section-name">🎤 1-Minute Song</div><div class="section-action-row"><button class="suno-copy section-action" type="button" data-suno-copy="song60" onclick="copySunoSection('song60')">COPY 1-MIN</button><button class="suno-save section-save" type="button" data-suno-save="song60" onclick="saveSunoSection('song60')">SAVE 1-MIN</button></div></div><div class="suno-section-text">${escapeHtml(currentSunoSections.song60)}</div></div>`;
+  wrap.style.display="grid";
+}
+
+function renderVideoSections(){
+  const wrap=document.getElementById("video-sections");
+  if(!wrap) return;
+  if(lastGeneratedType!=="video"){
+    wrap.style.display="none";
+    wrap.innerHTML="";
+    return;
+  }
+  const txt=document.getElementById("prompt-output").textContent||"";
+  const sections=parseVideoSections(txt);
+  if(!sections.length){
+    wrap.style.display="none";
+    wrap.innerHTML="";
+    return;
+  }
+  wrap.innerHTML=sections.map((section,index)=>`<div class="video-section-card"><div class="suno-section-head"><div class="video-section-name">${escapeHtml(section.title)}</div><div class="section-action-row"><button class="section-copy" type="button" data-video-copy="${index}" onclick="copyVideoSection(${index})">COPY SECTION</button><button class="section-save" type="button" data-video-save="${index}" onclick="saveVideoSection(${index})">SAVE SECTION</button></div></div><div class="section-card-text">${escapeHtml(section.content)}</div></div>`).join("");
+  wrap.style.display="grid";
+}
+
+
+function renderMarketingSections(){
+  const wrap=document.getElementById("marketing-sections");
+  if(!wrap) return;
+  if(!currentMarketingSections){
+    wrap.style.display="none";
+    wrap.innerHTML="";
+    return;
+  }
+  const labels={
+    captions:"✍️ Captions",
+    hashtags:"# Hashtags",
+    seo:"🔎 SEO",
+    ctas:"👉 CTAs",
+    email:"📧 Email",
+    pinterest:"📌 Pinterest",
+    tiktok:"🎵 TikTok",
+    facebook:"📘 Facebook",
+    instagram:"📸 Instagram",
+    youtube:"▶️ YouTube",
+    adcopy:"💸 Ad Copy",
+    strategy:"🧠 Strategy"
+  };
+  wrap.innerHTML=Object.entries(currentMarketingSections).map(([key,val])=>`<div class="marketing-section-card"><div class="suno-section-head"><div class="marketing-section-name">${labels[key]||key}</div><div class="section-action-row"><button class="marketing-copy" type="button" data-marketing-copy="${key}" onclick="copyMarketingSection('${key}')">COPY</button><button class="marketing-save" type="button" data-marketing-save="${key}" onclick="saveMarketingSection('${key}')">SAVE</button></div></div><div class="marketing-section-text">${escapeHtml(val)}</div></div>`).join("");
+  wrap.style.display="grid";
+}
+
+
+function parseVideoSections(txt){
+  const parts = txt.split(/\n(?=✦ )/).map(s => s.trim()).filter(Boolean);
+  const out = [];
+  parts.forEach(part => {
+    const lines = part.split(/\n/).filter(Boolean);
+    if (!lines.length) return;
+    const first = lines[0].trim();
+    if (first.startsWith("🎬 VIDEO SCRIPT")) {
+      const rest = lines.slice(1).filter(line => !/^━+$/.test(line.trim())).join("\n").trim();
+      if (rest) out.push({ title: "🎬 Video Overview", content: rest });
+      return;
+    }
+    if (first.startsWith("✦ ")) {
+      out.push({ title: first.replace(/^✦\s*/, ""), content: lines.slice(1).join("\n").trim() });
+    }
+  });
+  return out;
+}
+
+function triggerDownload(filename,txt){
+  const blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function showToast(message){
+  let toast=document.getElementById("glam-toast");
+  if(!toast){
+    toast=document.createElement("div");
+    toast.id="glam-toast";
+    toast.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;padding:12px 16px;border-radius:12px;border:1.5px solid rgba(212,175,55,.35);background:linear-gradient(135deg,rgba(13,24,41,.96),rgba(17,28,53,.96));color:#FFD700;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 12px 32px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;";
+    document.body.appendChild(toast);
+  }
+  toast.textContent=message;
+  toast.style.opacity="1";
+  toast.style.transform="translateX(-50%) translateY(0)";
+  clearTimeout(showToast._timer);
+  showToast._timer=setTimeout(()=>{
+    if(toast){
+      toast.style.opacity="0";
+      toast.style.transform="translateX(-50%) translateY(8px)";
+    }
+  },1600);
+}
+
+function saveSunoSection(key){
+  if(!currentSunoSections || !currentSunoSections[key]) return;
+  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  triggerDownload(`glam-suno-${key}-${stamp}.txt`,currentSunoSections[key]);
+  const btn=document.querySelector(`[data-suno-save="${key}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent="SAVED!";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  showToast("✓ Suno section saved!");
+}
+
+async function copyVideoSection(index){
+  const sections=parseVideoSections(document.getElementById("prompt-output").textContent||"");
+  const section=sections[index];
+  if(!section) return;
+  const ok=await copyPlainText(`${section.title}
+${section.content}`.trim());
+  const btn=document.querySelector(`[data-video-copy="${index}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent=ok?"COPIED!":"TRY AGAIN";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  if(ok) showToast("✓ Video section copied!");
+}
+
+function saveVideoSection(index){
+  const sections=parseVideoSections(document.getElementById("prompt-output").textContent||"");
+  const section=sections[index];
+  if(!section) return;
+  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  const safe=section.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'section';
+  triggerDownload(`glam-video-${safe}-${stamp}.txt`,`${section.title}
+${section.content}`.trim());
+  const btn=document.querySelector(`[data-video-save="${index}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent="SAVED!";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  showToast("✓ Video section saved!");
+}
+
+async function copyPlainText(txt){
+  if(navigator.clipboard && window.isSecureContext){
+    try{
+      await navigator.clipboard.writeText(txt);
+      return true;
+    }catch(e){}
+  }
+  const ta=document.createElement("textarea");
+  ta.value=txt;
+  ta.style.cssText="position:fixed;left:-9999px;";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok=false;
+  try{ok=document.execCommand("copy");}catch(e){ok=false;}
+  document.body.removeChild(ta);
+  return ok;
+}
+
+
+function saveMarketingSection(key){
+  if(!currentMarketingSections || !currentMarketingSections[key]) return;
+  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  triggerDownload(`glam-marketing-${key}-${stamp}.txt`,currentMarketingSections[key]);
+  const btn=document.querySelector(`[data-marketing-save="${key}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent="SAVED!";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  showToast("✓ Marketing section saved!");
+}
+
+async function copyMarketingSection(key){
+  if(!currentMarketingSections || !currentMarketingSections[key]) return;
+  const ok=await copyPlainText(currentMarketingSections[key]);
+  const btn=document.querySelector(`[data-marketing-copy="${key}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent=ok?"COPIED!":"TRY AGAIN";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  if(ok) showToast("✓ Marketing section copied!");
+}
+
+
+async function copySunoSection(key){
+  if(!currentSunoSections || !currentSunoSections[key]) return;
+  const ok=await copyPlainText(currentSunoSections[key]);
+  const btn=document.querySelector(`[data-suno-copy="${key}"]`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent=ok?"COPIED!":"TRY AGAIN";
+    setTimeout(()=>{btn.textContent=original;},1800);
+  }
+  if(ok) showToast("✓ Suno section copied!");
+}
+
+function generate(type){
+  categoryNotes[selectedCategory]=document.getElementById("custom-notes").value.trim();
+  if(type!=="suno") currentSunoSections=null;
+  currentMarketingSections=null;
+  const out=type==="photo"?buildPhotoPrompt():type==="video"?buildVideoScript():buildSunoPack();
+  buildMarketingPack();
+  lastGeneratedType=type;
+  document.getElementById("prompt-output").textContent=out;
+  document.getElementById("output-type-label").textContent=type==="photo"?"📸 Photo Prompt":type==="video"?"🎬 Video Script":"🎵 Suno Pack";
+  renderSunoSections();
+  renderVideoSections();
+  renderMarketingSections();
+  renderVariations([]);
+  addToHistory(type,out);
+  const sec=document.getElementById("output-section");
+  sec.style.display="block";
+  setTimeout(()=>sec.scrollIntoView({behavior:"smooth",block:"nearest"}),100);
+}
+
+async function copyOutput(){
+  const txt=document.getElementById("prompt-output").textContent;
+  const ok=await copyPlainText(txt);
+  if(ok){
+    document.getElementById("copy-icon").textContent="✅";
+    document.getElementById("copy-text").textContent="COPIED!";
+    setTimeout(()=>{document.getElementById("copy-icon").textContent="📋";document.getElementById("copy-text").textContent="COPY";},2200);
+  }
+}
+
+function saveOutput(){
+  const txt=document.getElementById("prompt-output").textContent.trim();
+  if(!txt)return;
+  const label=document.getElementById("output-type-label").textContent;
+  const kind=label.includes("Video")?"video":label.includes("Suno")?"suno":"photo";
+  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  triggerDownload(`glam-${kind}-prompt-${stamp}.txt`,txt);
+  document.getElementById("save-icon").textContent="✅";
+  document.getElementById("save-text").textContent="SAVED";
+  setTimeout(()=>{document.getElementById("save-icon").textContent="💾";document.getElementById("save-text").textContent="SAVE PROMPT";},2200);
+}
+
+function syncColorPicker(pid,tid){
+  const p=document.getElementById(pid),t=document.getElementById(tid);
+  p.addEventListener("input",e=>{t.value=e.target.value.toUpperCase();});
+  t.addEventListener("input",e=>{if(/^#[0-9A-F]{6}$/i.test(e.target.value.trim()))p.value=e.target.value.trim();});
+}
+
+// ═══════════ INIT ═══════════
+function init(){
+  buildSelect("camera-angle",CAMERA_ANGLES);
+  buildSelect("lens-type",LENSES);
+  buildSelect("light-source",LIGHT_SOURCES);
+  buildSelect("light-direction",LIGHT_DIRECTIONS);
+  buildSelect("shadow-style",SHADOW_STYLES);
+  buildSelect("atmosphere",ATMOSPHERES);
+  buildSelect("background-select",BACKGROUNDS);
+  buildSelect("color-palette",COLOR_PALETTES_LIST);
+  buildSelect("animal-print",ANIMAL_PRINTS_LIST);
+  buildSelect("merge-object-font",MERGE_OBJECT_FONT);
+  buildSelect("merge-construction",MERGE_CONSTRUCTION);
+  buildSelect("merge-realism",MERGE_REALISM);
+  buildSelect("merge-finish",MERGE_FINISH);
+  buildSelect("merge-thickness",MERGE_THICKNESS);
+  buildSelect("merge-edge",MERGE_EDGE);
+  buildSelect("merge-shadow",MERGE_SHADOW);
+  buildSelect("merge-drips",MERGE_DRIPS);
+  buildSelect("merge-primary",MERGE_COLOR_CHOICES);
+  buildSelect("merge-secondary",MERGE_COLOR_CHOICES);
+  buildSelect("merge-accent",MERGE_COLOR_CHOICES);
+  buildSelect("merge-decor",MERGE_DECOR);
+  buildSelect("merge-mood",MERGE_MOOD);
+  buildSelect("male-hairstyle",MALE_HAIR);
+  buildSelect("male-outfit",MALE_OUTFITS);
+  buildSelect("male-shoes",MALE_SHOES);
+  buildSelect("male-accessories",MALE_ACC);
+  buildSelect("female-hairstyle",FEMALE_HAIR);
+  buildSelect("female-outfit",FEMALE_OUTFITS);
+  buildSelect("female-shoes",FEMALE_SHOES);
+  buildSelect("female-accessories",FEMALE_ACC);
+  buildSelect("female-lashes",FEMALE_LASHES);
+  buildSelect("female-eyebrows",FEMALE_EYEBROWS);
+  buildSelect("female-makeup",FEMALE_MAKEUP);
+  buildSelect("female-nails",FEMALE_NAILS);
+  buildSelect("female-hair-gems",FEMALE_HAIR_GEMS);
+  buildSelect("female-earrings",FEMALE_EARRINGS);
+  buildSelect("skin-tone",SKIN_TONES);
+  buildSelect("expression",EXPRESSIONS);
+  buildSelect("pose-style",POSES);
+  syncColorPicker("cp1","cc1");syncColorPicker("cp2","cc2");syncColorPicker("cp3","cc3");syncColorPicker("cp4","cc4");
+  renderCategories();renderStyles();renderModifierChips();renderPresets();updateLockButtons();renderHistory();initReferenceGenerator();
+}
+
+// SDK integration
+const defaultConfig={generator_heading:"GLAM 3D Typography Prompt Generator",font_family:"Montserrat",font_size:16};
+if(window.elementSdk){
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange:async(c)=>{document.getElementById("generator-heading").textContent=c.generator_heading||defaultConfig.generator_heading;document.body.style.fontFamily=`${c.font_family||"Montserrat"},sans-serif`;},
+    mapToCapabilities:(c)=>({recolorables:[],borderables:[],fontEditable:{get:()=>c.font_family||defaultConfig.font_family,set:(v)=>{c.font_family=v;window.elementSdk.setConfig({font_family:v});}},fontSizeable:{get:()=>c.font_size||defaultConfig.font_size,set:(v)=>{c.font_size=v;window.elementSdk.setConfig({font_size:v});}}}),
+    mapToEditPanelValues:(c)=>new Map([["generator_heading",c.generator_heading||defaultConfig.generator_heading]])
+  });
+}
+
+// ═══════════ GENERATOR TABS ═══════════
+function switchGeneratorTab(tab){
+  document.getElementById("generator-tab-main").classList.toggle("active",tab==="main");
+  document.getElementById("generator-tab-ref").classList.toggle("active",tab==="ref");
+  document.getElementById("tab-btn-main").classList.toggle("active",tab==="main");
+  document.getElementById("tab-btn-ref").classList.toggle("active",tab==="ref");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ═══════════ REFERENCE FONT GENERATOR ═══════════
+const REF_FONT_STYLES=["BLOCKY ABC","INCREDIBLES","PROUD FAMILY","RUGRATS","TOY STORY","FRESH PRINCE","MARTIN","LIVING SINGLE"];
+const REF_LAYOUTS=["SINGLE WORD","ONE LINE","STACKED TITLE"];
+const REF_BACKGROUNDS=["WHITE","RED","TRANSPARENT"];
+const REF_COLOR_OPTIONS=["MATCH REFERENCE COLORS EXACTLY","CUSTOM COLORS"];
+let referencePromptText="";
+
+function initReferenceGenerator(){
+  buildSelect("ref-style",REF_FONT_STYLES);
+  buildSelect("ref-layout",REF_LAYOUTS);
+  buildSelect("ref-background",REF_BACKGROUNDS);
+  buildSelect("ref-colors",REF_COLOR_OPTIONS);
+}
+
+function toggleRefCustomColors(){
+  const show=document.getElementById("ref-colors").value==="CUSTOM COLORS";
+  document.getElementById("ref-custom-wrap").style.display=show?"block":"none";
+  if(!show) document.getElementById("ref-custom-colors").value="";
+}
+
+function generateReferencePrompt(){
+  const text=(document.getElementById("ref-text").value||"").trim();
+  const style=document.getElementById("ref-style").value;
+  const layout=document.getElementById("ref-layout").value;
+  const background=document.getElementById("ref-background").value;
+  const colors=document.getElementById("ref-colors").value;
+  const custom=(document.getElementById("ref-custom-colors").value||"").trim();
+
+  let prompt=`Create the text: "${text}" using ONLY the font style labeled: ${style} exactly as shown in the reference images.\n\n`;
+  prompt+=`STRICT STYLE RULES (DO NOT CHANGE):\n`;
+  prompt+=`- Match the letter shapes, thickness, outline style, angles, and proportions exactly like the reference font\n`;
+  prompt+=`- Keep spacing and character width consistent with the reference\n`;
+  prompt+=`- Do not create a new font or remix the style\n`;
+  prompt+=`- No extra icons, clipart, patterns, or extra words\n`;
+  prompt+=`- Text must be the main focus, clean and centered\n\n`;
+  prompt+=`LAYOUT: ${layout}\n`;
+  prompt+=`BACKGROUND: ${background}\n`;
+  prompt+=`COLORS: ${colors}`;
+  if(colors==="CUSTOM COLORS" && custom) prompt+=` (${custom})`;
+  prompt+=`\nOUTLINE: MATCH REFERENCE OUTLINE EXACTLY\n`;
+  prompt+=`IMAGE QUALITY: high-resolution, crisp edges, clean design, no blur\n\n`;
+  prompt+=`OUTPUT: isolated typography only, professional clean finish.`;
+
+  referencePromptText=prompt;
+  document.getElementById("ref-prompt-output").textContent=prompt;
+  document.getElementById("ref-output-wrap").style.display="block";
+}
+
+async function copyReferencePrompt(){
+  if(!referencePromptText) return;
+  try{
+    await navigator.clipboard.writeText(referencePromptText);
+    if(typeof showToast==="function") showToast("Reference prompt copied");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=referencePromptText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    if(typeof showToast==="function") showToast("Reference prompt copied");
+  }
+}
+
+function saveReferencePrompt(){
+  if(!referencePromptText) return;
+  const blob=new Blob([referencePromptText],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="reference-font-prompt.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  if(typeof showToast==="function") showToast("Reference prompt saved");
+}
+
+init();
+
+function scrollPageTop(){
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function scrollPageBottom(){
+  window.scrollTo({top:document.documentElement.scrollHeight,behavior:"smooth"});
+}
+function updateScrollButtons(){
+  const up=document.getElementById("scroll-up-btn");
+  const down=document.getElementById("scroll-down-btn");
+  if(!up || !down) return;
+  const topY=window.scrollY || window.pageYOffset || 0;
+  const winH=window.innerHeight || document.documentElement.clientHeight || 0;
+  const fullH=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);
+  up.classList.toggle("hidden", topY < 120);
+  down.classList.toggle("hidden", topY + winH >= fullH - 120);
+}
+window.addEventListener("scroll", updateScrollButtons, {passive:true});
+window.addEventListener("resize", updateScrollButtons);
+setTimeout(updateScrollButtons, 150);
+
+</script>
+</body>
+</html>
